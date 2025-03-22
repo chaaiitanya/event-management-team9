@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Breadcrumbs -->
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <a href="{% url 'main:dashboard' %}" class="text-gray-700 hover:text-primary-600 inline-flex items-center">
+            <i class="fas fa-home mr-2"></i>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <i class="fas fa-chevron-right text-gray-400 mx-2 text-sm"></i>
+            <a href="{% url 'main:events' %}" class="text-gray-700 hover:text-primary-600">
+              Events
+            </a>
+          </div>
+        </li>
+        <li aria-current="page">
+          <div class="flex items-center">
+            <i class="fas fa-chevron-right text-gray-400 mx-2 text-sm"></i>
+            <span class="text-gray-500">Create Event</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Create New Event</h1>
+      <a href="{% url 'main:events' %}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i>
+        Back to Events
+      </a>
+    </div>
+
+    <!-- Event Form -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
+            {% for error in form.non_field_errors %}
+              <p class="text-sm">{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+        
+        <!-- Two-column layout for form fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Left column -->
+          <div class="space-y-6">
+            <!-- Title -->
+            <div>
+              <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Event Title <span class="text-red-500">*</span>
+              </label>
+              {{ form.title }}
+              {% if form.title.errors %}
+                {% for error in form.title.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <!-- Location -->
+            <div>
+              <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Location <span class="text-red-500">*</span>
+              </label>
+              {{ form.location }}
+              {% if form.location.errors %}
+                {% for error in form.location.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <!-- Category -->
+            <div>
+              <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Category <span class="text-red-500">*</span>
+              </label>
+              {{ form.category }}
+              {% if form.category.errors %}
+                {% for error in form.category.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <!-- Start Date -->
+            <div>
+              <label for="{{ form.start_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Start Date & Time <span class="text-red-500">*</span>
+              </label>
+              {{ form.start_date }}
+              {% if form.start_date.errors %}
+                {% for error in form.start_date.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <!-- End Date -->
+            <div>
+              <label for="{{ form.end_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                End Date & Time <span class="text-red-500">*</span>
+              </label>
+              {{ form.end_date }}
+              {% if form.end_date.errors %}
+                {% for error in form.end_date.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Right column -->
+          <div class="space-y-6">
+            <!-- Capacity -->
+            <div>
+              <label for="{{ form.capacity.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Capacity <span class="text-gray-500 text-xs">(0 for unlimited)</span>
+              </label>
+              {{ form.capacity }}
+              {% if form.capacity.errors %}
+                {% for error in form.capacity.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <!-- Registration Deadline -->
+            <div>
+              <label for="{{ form.registration_deadline.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Registration Deadline <span class="text-gray-500 text-xs">(Optional)</span>
+              </label>
+              {{ form.registration_deadline }}
+              {% if form.registration_deadline.errors %}
+                {% for error in form.registration_deadline.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <!-- Status -->
+            <div>
+              <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Status <span class="text-red-500">*</span>
+              </label>
+              {{ form.status }}
+              {% if form.status.errors %}
+                {% for error in form.status.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+              <p class="text-gray-500 text-xs mt-1">Draft events are not visible to users</p>
+            </div>
+            
+            <!-- Image Upload -->
+            <div>
+              <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                Event Image <span class="text-gray-500 text-xs">(Optional)</span>
+              </label>
+              <div class="flex items-center space-x-4">
+                <div class="flex-grow">
+                  {{ form.image }}
+                </div>
+                <div class="w-16 h-16 bg-gray-100 rounded flex items-center justify-center" id="imagePreview">
+                  <i class="fas fa-image text-gray-400 text-2xl"></i>
+                </div>
+              </div>
+              {% if form.image.errors %}
+                {% for error in form.image.errors %}
+                  <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+              <p class="text-gray-500 text-xs mt-1">Recommended size: 1200x630px</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Description (Full Width) -->
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+            Description <span class="text-red-500">*</span>
+          </label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            {% for error in form.description.errors %}
+              <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          {% endif %}
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="flex items-center justify-end space-x-4 pt-4 border-t border-gray-200">
+          <a href="{% url 'main:events' %}" class="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            Cancel
+          </a>
+          <button type="submit" class="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            Create Event
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Image preview functionality
+    const imageInput = document.querySelector('input[type="file"]');
+    const imagePreview = document.getElementById('imagePreview');
+    
+    imageInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          imagePreview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded">`;
+        }
+        
+        reader.readAsDataURL(this.files[0]);
+      } else {
+        imagePreview.innerHTML = `<i class="fas fa-image text-gray-400 text-2xl"></i>`;
+      }
+    });
+    
+    // Set minimum date for datetime inputs
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}T00:00`;
+    
+    document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+      input.setAttribute('min', formattedDate);
+    });
+  });
+</script>
+{% endblock %}

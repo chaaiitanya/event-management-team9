@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <div class="p-6">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Feedback Management <span class="bg-orange-500 text-white px-2">IN PROGRESS</span></h1>
+        <p class="text-gray-600 mt-1">View and respond to attendee feedback</p>
+      </div>
+      <div class="mt-4 md:mt-0">
+        <a href="#" class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex items-center">
+          <i class="fas fa-file-export mr-2"></i>
+          <span>Export Report</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Simple Filter -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+        <div class="flex-grow">
+          <input type="text" placeholder="Search feedback..." class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+          <select class="px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="">All Events</option>
+            <option value="tech">Tech Conference</option>
+            <option value="music">Music Festival</option>
+            <option value="charity">Charity Gala</option>
+          </select>
+          <select class="px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="">All Ratings</option>
+            <option value="5">5 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="2">2 Stars</option>
+            <option value="1">1 Star</option>
+          </select>
+          <button class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors">
+            <i class="fas fa-filter mr-2"></i>
+            <span>Filter</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Cards -->
+    <div class="space-y-6 mb-6">
+      <!-- Feedback Item 1 -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="h-10 w-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                JD
+              </div>
+            </div>
+            <div class="ml-4 flex-grow">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-medium text-gray-900">John Doe</h3>
+                <span class="text-sm text-gray-500">Mar 26, 2025</span>
+              </div>
+              <div class="flex items-center mt-1">
+                <div class="flex text-yellow-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+                <span class="ml-2 text-gray-600">Tech Conference</span>
+              </div>
+              <p class="mt-3 text-gray-700">
+                The conference was extremely well organized. The speakers were knowledgeable and the networking opportunities were excellent. I particularly enjoyed the hands-on workshops and would definitely attend again next year.
+              </p>
+              <div class="mt-4 flex items-center justify-between">
+                <div class="flex space-x-3">
+                  <button class="flex items-center text-gray-500 hover:text-blue-500">
+                    <i class="fas fa-reply mr-1"></i>
+                    <span>Reply</span>
+                  </button>
+                  <button class="flex items-center text-gray-500 hover:text-green-500">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    <span>Mark as Reviewed</span>
+                  </button>
+                </div>
+                <div class="flex items-center">
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Positive
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Item 2 -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="h-10 w-10 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                SM
+              </div>
+            </div>
+            <div class="ml-4 flex-grow">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-medium text-gray-900">Sarah Miller</h3>
+                <span class="text-sm text-gray-500">Mar 25, 2025</span>
+              </div>
+              <div class="flex items-center mt-1">
+                <div class="flex text-yellow-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+                <span class="ml-2 text-gray-600">Tech Conference</span>
+              </div>
+              <p class="mt-3 text-gray-700">
+                While the content of the presentations was good, the venue was too crowded and the air conditioning wasn't working properly. It was difficult to concentrate in such conditions. The catering was excellent though.
+              </p>
+              <div class="mt-4 flex items-center justify-between">
+                <div class="flex space-x-3">
+                  <button class="flex items-center text-gray-500 hover:text-blue-500">
+                    <i class="fas fa-reply mr-1"></i>
+                    <span>Reply</span>
+                  </button>
+                  <button class="flex items-center text-gray-500 hover:text-green-500">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    <span>Mark as Reviewed</span>
+                  </button>
+                </div>
+                <div class="flex items-center">
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Neutral
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Item 3 -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="h-10 w-10 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold">
+                RJ
+              </div>
+            </div>
+            <div class="ml-4 flex-grow">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-medium text-gray-900">Robert Johnson</h3>
+                <span class="text-sm text-gray-500">Mar 24, 2025</span>
+              </div>
+              <div class="flex items-center mt-1">
+                <div class="flex text-yellow-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                  <i class="far fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+                <span class="ml-2 text-gray-600">Music Festival</span>
+              </div>
+              <p class="mt-3 text-gray-700">
+                Very disappointed with the organization. The schedule was not followed, there were huge delays between performances, and the sound quality was poor. Not worth the ticket price at all.
+              </p>
+              <div class="mt-4 flex items-center justify-between">
+                <div class="flex space-x-3">
+                  <button class="flex items-center text-blue-500">
+                    <i class="fas fa-reply mr-1"></i>
+                    <span>Reply</span>
+                  </button>
+                  <button class="flex items-center text-gray-500 hover:text-green-500">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    <span>Mark as Reviewed</span>
+                  </button>
+                </div>
+                <div class="flex items-center">
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                    Negative
+                  </span>
+                </div>
+              </div>
+              <!-- Reply already added -->
+              <div class="mt-4 pl-6 border-l-2 border-gray-200">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0">
+                    <div class="h-8 w-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-xs">
+                      AM
+                    </div>
+                  </div>
+                  <div class="ml-3">
+                    <div class="flex items-center">
+                      <h4 class="text-sm font-medium text-gray-900">Admin (Maria)</h4>
+                      <span class="ml-2 text-xs text-gray-500">Today, 10:30 AM</span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-700">
+                      We're very sorry about your experience. We've identified the issues with the sound system and are implementing changes for future events. Please check your email for our compensation offer.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Item 4 -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="h-10 w-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold">
+                LT
+              </div>
+            </div>
+            <div class="ml-4 flex-grow">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-medium text-gray-900">Lisa Thompson</h3>
+                <span class="text-sm text-gray-500">Mar 22, 2025</span>
+              </div>
+              <div class="flex items-center mt-1">
+                <div class="flex text-yellow-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+                <span class="ml-2 text-gray-600">Charity Gala</span>
+              </div>
+              <p class="mt-3 text-gray-700">
+                The charity gala was a beautiful event. The venue was stunning and the cause is so important. I would have given 5 stars but the event ran a bit long. Otherwise, it was perfect!
+              </p>
+              <div class="mt-4 flex items-center justify-between">
+                <div class="flex space-x-3">
+                  <button class="flex items-center text-gray-500 hover:text-blue-500">
+                    <i class="fas fa-reply mr-1"></i>
+                    <span>Reply</span>
+                  </button>
+                  <button class="flex items-center text-green-500">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    <span>Reviewed</span>
+                  </button>
+                </div>
+                <div class="flex items-center">
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Positive
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="bg-white px-4 py-3 flex items-center justify-between rounded-lg shadow-sm">
+      <div>
+        <p class="text-sm text-gray-700">Showing 1-4 of 24 feedback items</p>
+      </div>
+      <div>
+        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+          <a href="#" class="px-2 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500">
+            <i class="fas fa-chevron-left"></i>
+          </a>
+          <a href="#" class="px-4 py-2 border border-primary-500 bg-primary-50 text-primary-600">1</a>
+          <a href="#" class="px-4 py-2 border border-gray-300 bg-white text-gray-500">2</a>
+          <a href="#" class="px-4 py-2 border border-gray-300 bg-white text-gray-500">3</a>
+          <a href="#" class="px-4 py-2 border border-gray-300 bg-white text-gray-500">4</a>
+          <a href="#" class="px-2 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500">
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Feedback Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+            <i class="fas fa-comment-alt text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Total Feedback</p>
+            <p class="text-2xl font-semibold text-gray-800">243</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-green-100 text-green-500">
+            <i class="fas fa-smile text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Positive</p>
+            <p class="text-2xl font-semibold text-gray-800">178</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
+            <i class="fas fa-meh text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Neutral</p>
+            <p class="text-2xl font-semibold text-gray-800">42</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-red-100 text-red-500">
+            <i class="fas fa-frown text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Negative</p>
+            <p class="text-2xl font-semibold text-gray-800">23</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

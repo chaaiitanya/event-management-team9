@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <!-- Navbar -->
+  <header class="bg-blue-500 text-white py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+      <h1 class="text-2xl font-bold">Student Dashboard</h1>
+      <nav>
+        <a href="#" class="text-lg text-white hover:underline px-4">Home</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Profile</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8 px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Upcoming Events -->
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Upcoming Events</h2>
+        <ul class="space-y-3">
+          <li class="border-b border-gray-200 pb-3">
+            <p class="text-lg text-gray-600">March 15, 2025</p>
+            <p class="text-xl text-gray-800 font-medium">Midterm Exam</p>
+          </li>
+          <li class="border-b border-gray-200 pb-3">
+            <p class="text-lg text-gray-600">March 20, 2025</p>
+            <p class="text-xl text-gray-800 font-medium">Project Submission</p>
+          </li>
+          <li>
+            <p class="text-lg text-gray-600">March 25, 2025</p>
+            <p class="text-xl text-gray-800 font-medium">Group Presentation</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Data Visualizations -->
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Performance Overview</h2>
+        <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-500 text-lg">
+          <!-- Placeholder for Chart -->
+          <p>Chart Placeholder</p>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Quick Links</h2>
+        <ul class="space-y-4">
+          <li>
+            <a href="#" class="block bg-blue-500 text-white text-lg text-center py-3 rounded-md hover:bg-blue-600">
+              View Reports
+            </a>
+          </li>
+          <li>
+            <a href="#" class="block bg-blue-500 text-white text-lg text-center py-3 rounded-md hover:bg-blue-600">
+              Manage Data
+            </a>
+          </li>
+          <li>
+            <a href="#" class="block bg-blue-500 text-white text-lg text-center py-3 rounded-md hover:bg-blue-600">
+              Contact Support
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

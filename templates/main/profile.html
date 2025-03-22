@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <!-- Navbar -->
+  <header class="bg-blue-600 text-white py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+      <h1 class="text-2xl font-bold">Profile Management</h1>
+      <nav>
+        <a href="#" class="text-lg text-white hover:underline px-4">Home</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Dashboard</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8 px-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Your Profile</h2>
+
+    <!-- Update Personal Information -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Update Personal Information</h3>
+      <form action="#" method="POST" class="space-y-4">
+        <div>
+          <label for="full-name" class="block text-lg font-medium text-gray-700">Full Name</label>
+          <input type="text" id="full-name" name="full-name" placeholder="Enter your full name" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="email" class="block text-lg font-medium text-gray-700">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email address" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="phone" class="block text-lg font-medium text-gray-700">Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <button type="submit" class="bg-blue-500 text-white text-lg px-6 py-2 rounded-lg hover:bg-blue-600">Update Information</button>
+      </form>
+    </div>
+
+    <!-- Change Password -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Change Password</h3>
+      <form action="#" method="POST" class="space-y-4">
+        <div>
+          <label for="current-password" class="block text-lg font-medium text-gray-700">Current Password</label>
+          <input type="password" id="current-password" name="current-password" placeholder="Enter your current password" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="new-password" class="block text-lg font-medium text-gray-700">New Password</label>
+          <input type="password" id="new-password" name="new-password" placeholder="Enter a new password" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="confirm-password" class="block text-lg font-medium text-gray-700">Confirm New Password</label>
+          <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your new password" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <button type="submit" class="bg-blue-500 text-white text-lg px-6 py-2 rounded-lg hover:bg-blue-600">Change Password</button>
+      </form>
+    </div>
+
+    <!-- Manage Preferences -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Manage Preferences</h3>
+      <form action="#" method="POST" class="space-y-4">
+        <div>
+          <label for="notifications" class="block text-lg font-medium text-gray-700">Email Notifications</label>
+          <select id="notifications" name="notifications" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+            <option value="enabled">Enabled</option>
+            <option value="disabled">Disabled</option>
+          </select>
+        </div>
+        <div>
+          <label for="theme" class="block text-lg font-medium text-gray-700">Preferred Theme</label>
+          <select id="theme" name="theme" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+        <button type="submit" class="bg-blue-500 text-white text-lg px-6 py-2 rounded-lg hover:bg-blue-600">Save Preferences</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

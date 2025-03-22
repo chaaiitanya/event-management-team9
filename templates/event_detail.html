@@ -1,0 +1,343 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <!-- Breadcrumbs -->
+  <nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href="{% url 'main:dashboard' %}" class="text-gray-700 hover:text-primary-600 inline-flex items-center">
+          <i class="fas fa-home mr-2"></i>
+          Dashboard
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i class="fas fa-chevron-right text-gray-400 mx-2 text-sm"></i>
+          <a href="{% url 'main:events' %}" class="text-gray-700 hover:text-primary-600"> Events </a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <i class="fas fa-chevron-right text-gray-400 mx-2 text-sm"></i>
+          <span class="text-gray-500">{{ event.title }}</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Event Status Banner -->
+  {% if event.status == 'draft' %}
+  <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-md" role="alert">
+    <div class="flex items-center">
+      <i class="fas fa-exclamation-triangle mr-3"></i>
+      <div>
+        <p class="font-bold">Draft Mode</p>
+        <p class="text-sm">This event is currently in draft mode and is not visible to the public.</p>
+      </div>
+    </div>
+  </div>
+  {% elif event.status == 'cancelled' %}
+  <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md" role="alert">
+    <div class="flex items-center">
+      <i class="fas fa-times-circle mr-3"></i>
+      <div>
+        <p class="font-bold">Event Cancelled</p>
+        <p class="text-sm">This event has been cancelled.</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Main Content -->
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Left Column - Event Details -->
+    <div class="lg:w-2/3">
+      <!-- Event Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2 md:mb-0">{{ event.title }}</h1>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center space-x-3">
+          {% if can_edit %}
+          <a href="{% url 'main:edit_event' event.slug %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <i class="fas fa-edit mr-2"></i>
+            Edit
+          </a>
+          {% endif %}
+
+          <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <i class="fas fa-print mr-2"></i>
+            Print
+          </button>
+
+          <button id="shareButton" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <i class="fas fa-share-alt mr-2"></i>
+            Share
+          </button>
+        </div>
+      </div>
+
+      <!-- Event Image -->
+      <div class="mb-8 rounded-lg overflow-hidden shadow-md h-64 md:h-96 bg-gray-100">
+        {% if event.image %}
+        <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-full h-full object-cover" />
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center bg-gray-200">
+          <i class="fas fa-calendar-alt text-gray-400 text-5xl"></i>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Event Status Tags -->
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium"> {{ event.get_category_display }} </span>
+
+        {% if event.is_past_event %}
+        <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium"> Past Event </span>
+        {% elif event.is_ongoing %}
+        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium"> Happening Now </span>
+        {% else %}
+        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"> Upcoming </span>
+        {% endif %} {% if event.capacity > 0 %}
+        <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium"> Limited Capacity: {{ event.capacity }} spots </span>
+        {% endif %}
+      </div>
+
+      <!-- Event Description -->
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">About This Event</h2>
+        <div class="prose prose-blue max-w-none text-gray-700">{{ event.description|linebreaks }}</div>
+      </div>
+
+      <!-- Event Organizer -->
+      <div class="mb-8 bg-gray-50 rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Organizer</h2>
+        <div class="flex items-center">
+          <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-semibold mr-4">{{ event.created_by.get_abbreviated_name|slice:":2"|upper|default:event.created_by.email|slice:":2"|upper }}</div>
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">{{ event.created_by.get_full_name|default:event.created_by.email }}</h3>
+            <p class="text-gray-600 text-sm">Organizer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Event Info & Registration -->
+    <div class="lg:w-1/3">
+      <!-- Event Info Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6 sticky top-24">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Details</h2>
+
+        <!-- Date & Time -->
+        <div class="flex items-start mb-4">
+          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+            <i class="fas fa-calendar text-blue-600"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-900">Date & Time</h3>
+            <p class="text-gray-600">
+              {% if event.start_date.date == event.end_date.date %} {{ event.start_date|date:"F j, Y" }}<br />
+              {{ event.start_date|date:"g:i A" }} - {{ event.end_date|date:"g:i A" }} {% else %} {{ event.start_date|date:"F j, Y, g:i A" }} -<br />
+              {{ event.end_date|date:"F j, Y, g:i A" }} {% endif %}
+            </p>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="flex items-start mb-4">
+          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+            <i class="fas fa-map-marker-alt text-green-600"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-900">Location</h3>
+            <p class="text-gray-600">{{ event.location }}</p>
+          </div>
+        </div>
+
+        <!-- Registration Deadline -->
+        {% if event.registration_deadline %}
+        <div class="flex items-start mb-4">
+          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
+            <i class="fas fa-clock text-yellow-600"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-900">Registration Deadline</h3>
+            <p class="text-gray-600">{{ event.registration_deadline|date:"F j, Y, g:i A" }}</p>
+
+            {% if event.registration_deadline > now %}
+            <p class="text-xs text-green-600 mt-1">Registration still open</p>
+            {% else %}
+            <p class="text-xs text-red-600 mt-1">Registration closed</p>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Registration/Action Button -->
+        <!-- Registration/Action Button -->
+        <div class="mt-6">
+          {% if event.status == 'cancelled' %}
+          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Event Cancelled</button>
+          {% elif event.is_past_event %}
+          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Event Has Ended</button>
+          {% elif is_registered %}
+          <a href="{% url 'main:cancel_registration' event.id %}" class="w-full px-6 py-3 bg-red-100 text-red-700 rounded-md font-medium text-center inline-block hover:bg-red-200 transition-colors"> Cancel Registration </a>
+          {% elif event.registration_open %} {% if event.capacity > 0 and event.registrations.count >= event.capacity %}
+          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Event Full</button>
+          {% else %}
+          <a href="{% url 'main:register_event' event.id %}" class="w-full px-6 py-3 bg-primary-600 text-white rounded-md font-medium text-center inline-block hover:bg-primary-700 transition-colors"> Register Now </a>
+          {% endif %} {% else %}
+          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Registration Closed</button>
+          {% endif %}
+        </div>
+
+        <!-- Add to Calendar -->
+        <div class="mt-4">
+          <button id="addToCalendarBtn" class="w-full px-6 py-2 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors flex items-center justify-center">
+            <i class="fas fa-calendar-plus mr-2"></i>
+            Add to Calendar
+          </button>
+
+          <div id="calendarOptions" class="hidden mt-2 bg-white border border-gray-200 rounded-md shadow-sm">
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToGoogleCalendar(); return false;"> <i class="fab fa-google mr-2 text-red-500"></i> Google Calendar </a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToOutlook(); return false;"> <i class="fab fa-microsoft mr-2 text-blue-500"></i> Outlook </a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToAppleCalendar(); return false;"> <i class="fab fa-apple mr-2"></i> Apple Calendar </a>
+          </div>
+        </div>
+
+        <!-- Share Options -->
+        <div id="shareOptions" class="hidden mt-4 bg-white border border-gray-200 rounded-md shadow-sm">
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="shareOnFacebook(); return false;"> <i class="fab fa-facebook mr-2 text-blue-600"></i> Facebook </a>
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="shareOnTwitter(); return false;"> <i class="fab fa-twitter mr-2 text-blue-400"></i> Twitter </a>
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="shareOnLinkedIn(); return false;"> <i class="fab fa-linkedin mr-2 text-blue-700"></i> LinkedIn </a>
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="copyLink(); return false;"> <i class="fas fa-link mr-2 text-gray-500"></i> Copy Link </a>
+        </div>
+      </div>
+
+      <!-- Related Events -->
+      {% if related_events %}
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Related Events</h2>
+
+        <div class="space-y-4">
+          {% for related in related_events %}
+          <a href="{% url 'main:event_detail' related.slug %}" class="block group">
+            <div class="flex items-start">
+              <div class="w-16 h-16 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 mr-4">
+                {% if related.image %}
+                <img src="{{ related.image.url }}" alt="{{ related.title }}" class="w-full h-full object-cover" />
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                  <i class="fas fa-calendar-alt text-gray-400"></i>
+                </div>
+                {% endif %}
+              </div>
+              <div>
+                <h3 class="text-sm font-medium text-gray-900 group-hover:text-primary-600 transition-colors">{{ related.title }}</h3>
+                <p class="text-xs text-gray-500">{{ related.start_date|date:"F j, Y" }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ related.location }}</p>
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add to Calendar dropdown toggle
+    const addToCalendarBtn = document.getElementById("addToCalendarBtn");
+    const calendarOptions = document.getElementById("calendarOptions");
+
+    addToCalendarBtn.addEventListener("click", function () {
+      calendarOptions.classList.toggle("hidden");
+      // Hide share options if open
+      if (!shareOptions.classList.contains("hidden")) {
+        shareOptions.classList.add("hidden");
+      }
+    });
+
+    // Share dropdown toggle
+    const shareButton = document.getElementById("shareButton");
+    const shareOptions = document.getElementById("shareOptions");
+
+    shareButton.addEventListener("click", function () {
+      shareOptions.classList.toggle("hidden");
+      // Hide calendar options if open
+      if (!calendarOptions.classList.contains("hidden")) {
+        calendarOptions.classList.add("hidden");
+      }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest("#addToCalendarBtn") && !event.target.closest("#calendarOptions")) {
+        calendarOptions.classList.add("hidden");
+      }
+
+      if (!event.target.closest("#shareButton") && !event.target.closest("#shareOptions")) {
+        shareOptions.classList.add("hidden");
+      }
+    });
+  });
+
+  // Calendar functions
+  function addToGoogleCalendar() {
+    const eventTitle = encodeURIComponent("{{ event.title }}");
+    const eventDescription = encodeURIComponent("{{ event.description|truncatewords:50 }}");
+    const eventLocation = encodeURIComponent("{{ event.location }}");
+    const startDate = new Date('{{ event.start_date|date:"c" }}');
+    const endDate = new Date('{{ event.end_date|date:"c" }}');
+
+    const startDateFormatted = startDate.toISOString().replace(/-|:|\.\d+/g, "");
+    const endDateFormatted = endDate.toISOString().replace(/-|:|\.\d+/g, "");
+
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&details=${eventDescription}&location=${eventLocation}&dates=${startDateFormatted}/${endDateFormatted}`;
+
+    window.open(googleCalendarUrl, "_blank");
+  }
+
+  function addToOutlook() {
+    // Implementation for Outlook calendar
+    alert("Outlook calendar integration coming soon!");
+  }
+
+  function addToAppleCalendar() {
+    // Implementation for Apple calendar
+    alert("Apple calendar integration coming soon!");
+  }
+
+  // Share functions
+  function shareOnFacebook() {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+  }
+
+  function shareOnTwitter() {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent("Check out this event: {{ event.title }}");
+    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank");
+  }
+
+  function shareOnLinkedIn() {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent("{{ event.title }}");
+    const summary = encodeURIComponent("{{ event.description|truncatewords:30 }}");
+    window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${summary}`, "_blank");
+  }
+
+  function copyLink() {
+    const tempInput = document.createElement("input");
+    tempInput.value = window.location.href;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+
+    alert("Link copied to clipboard!");
+  }
+</script>
+{% endblock %}

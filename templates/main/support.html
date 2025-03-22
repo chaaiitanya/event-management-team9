@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Support</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <!-- Navbar -->
+  <header class="bg-blue-600 text-white py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+      <h1 class="text-2xl font-bold">Help & Support</h1>
+      <nav>
+        <a href="#" class="text-lg text-white hover:underline px-4">Home</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Dashboard</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8 px-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">How can we help you?</h2>
+
+    <!-- FAQs Section -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h3>
+      <div class="space-y-4">
+        <div>
+          <h4 class="text-lg font-medium text-gray-700">1. How do I reset my password?</h4>
+          <p class="text-gray-600">You can reset your password by visiting the <a href="#" class="text-blue-500 hover:underline">Forgot Password</a> page and following the instructions.</p>
+        </div>
+        <div>
+          <h4 class="text-lg font-medium text-gray-700">2. How can I contact customer support?</h4>
+          <p class="text-gray-600">You can reach out to us via the contact form below or email us at <a href="mailto:support@example.com" class="text-blue-500 hover:underline">support@example.com</a>.</p>
+        </div>
+        <div>
+          <h4 class="text-lg font-medium text-gray-700">3. Where can I find my invoices?</h4>
+          <p class="text-gray-600">Invoices are available in your account dashboard under the "Billing" section.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Contact Information</h3>
+      <p class="text-gray-600 mb-4">If you need further assistance, you can contact us using the information below:</p>
+      <ul class="list-disc pl-6 space-y-2 text-gray-700">
+        <li>Email: <a href="mailto:support@example.com" class="text-blue-500 hover:underline">support@example.com</a></li>
+        <li>Phone: +1 (123) 456-7890</li>
+        <li>Address: 123 Event Street, City, Country</li>
+      </ul>
+    </div>
+
+    <!-- Support Request Form -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Submit a Support Request</h3>
+      <form action="#" method="POST" class="space-y-4">
+        <div>
+          <label for="name" class="block text-lg font-medium text-gray-700">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Enter your name" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="email" class="block text-lg font-medium text-gray-700">Your Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="issue" class="block text-lg font-medium text-gray-700">Issue Type</label>
+          <select id="issue" name="issue" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+            <option value="technical">Technical Support</option>
+            <option value="billing">Billing</option>
+            <option value="general">General Inquiry</option>
+          </select>
+        </div>
+        <div>
+          <label for="message" class="block text-lg font-medium text-gray-700">Message</label>
+          <textarea id="message" name="message" rows="4" placeholder="Describe your issue" class="w-full border border-gray-300 rounded-lg p-2 text-lg"></textarea>
+        </div>
+        <button type="submit" class="bg-blue-500 text-white text-lg px-6 py-2 rounded-lg hover:bg-blue-600">Submit Request</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,399 @@
+{% extends 'base.html' %}
+
+{% load static custom_filters %}
+
+{% block content %}
+  <div class="p-6">
+    <!-- Stats Overview - With Real Data -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+            <i class="fas fa-calendar-check text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Total Events</p>
+            <p class="text-2xl font-semibold text-gray-800">{{ stats.total_events }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-green-100 text-green-500">
+            <i class="fas fa-users text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Registered Users</p>
+            <p class="text-2xl font-semibold text-gray-800">{{ stats.total_users }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-purple-100 text-purple-500">
+            <i class="fas fa-ticket-alt text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Registrations</p>
+            <p class="text-2xl font-semibold text-gray-800">{{ stats.total_registrations }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-yellow-500">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
+            <i class="fas fa-star text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Avg. Rating</p>
+            <p class="text-2xl font-semibold text-gray-800">{{ stats.avg_rating }}/5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Management Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- User Management -->
+      <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+          <h3 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-users-cog mr-2"></i>
+            User Management
+          </h3>
+        </div>
+        <div class="p-6">
+          <ul class="space-y-3">
+            <li>
+              <a href="#" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-user-friends text-blue-500 mr-3"></i>
+                  View Users
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-user-plus text-blue-500 mr-3"></i>
+                  Add New User
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'admin:auth_group_changelist' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-user-shield text-blue-500 mr-3"></i>
+                  Manage Roles
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Event Management -->
+      <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white">
+          <h3 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-calendar-alt mr-2"></i>
+            Event Management
+          </h3>
+        </div>
+        <div class="p-6">
+          <ul class="space-y-3">
+            <li>
+              <a href="{% url 'main:events' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-list text-green-500 mr-3"></i>
+                  View Events
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main:create_event' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-plus-circle text-green-500 mr-3"></i>
+                  Create Event
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-chart-pie text-green-500 mr-3"></i>
+                  Event Analytics
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- System Settings -->
+      <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+          <h3 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-cogs mr-2"></i>
+            System Settings
+          </h3>
+        </div>
+        <div class="p-6">
+          <ul class="space-y-3">
+            <li>
+              <a href="{% url 'main:settings' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-sliders-h text-purple-500 mr-3"></i>
+                  General Settings
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-lock text-purple-500 mr-3"></i>
+                  Security Settings
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <span class="flex items-center">
+                  <i class="fas fa-history text-purple-500 mr-3"></i>
+                  Audit Logs
+                </span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Statistics -->
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-800">Event Statistics</h3>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div class="bg-blue-50 rounded-lg p-4 text-center">
+            <div class="text-blue-500 text-2xl font-bold mb-1">{{ event_stats.upcoming }}</div>
+            <div class="text-sm text-gray-600">Upcoming</div>
+          </div>
+          
+          <div class="bg-green-50 rounded-lg p-4 text-center">
+            <div class="text-green-500 text-2xl font-bold mb-1">{{ event_stats.ongoing }}</div>
+            <div class="text-sm text-gray-600">Ongoing</div>
+          </div>
+          
+          <div class="bg-purple-50 rounded-lg p-4 text-center">
+            <div class="text-purple-500 text-2xl font-bold mb-1">{{ event_stats.completed }}</div>
+            <div class="text-sm text-gray-600">Completed</div>
+          </div>
+          
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <div class="text-gray-500 text-2xl font-bold mb-1">{{ event_stats.draft }}</div>
+            <div class="text-sm text-gray-600">Draft</div>
+          </div>
+          
+          <div class="bg-red-50 rounded-lg p-4 text-center">
+            <div class="text-red-500 text-2xl font-bold mb-1">{{ event_stats.cancelled }}</div>
+            <div class="text-sm text-gray-600">Cancelled</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Events - With Real Data -->
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-gray-800">Upcoming Events</h3>
+        <a href="{% url 'main:events' %}?status=upcoming" class="text-sm text-blue-500 hover:underline">View All</a>
+      </div>
+      <div class="p-6">
+        {% if upcoming_events %}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for event in upcoming_events %}
+              <div class="flex items-center p-3 {% if event.category == 'conference' %}bg-blue-50{% elif event.category == 'workshop' %}bg-purple-50{% elif event.category == 'concert' %}bg-green-50{% elif event.category == 'exhibition' %}bg-yellow-50{% elif event.category == 'fundraising' %}bg-red-50{% else %}bg-gray-50{% endif %} rounded-lg">
+                <div class="flex-shrink-0 w-12 h-12 {% if event.category == 'conference' %}bg-blue-500{% elif event.category == 'workshop' %}bg-purple-500{% elif event.category == 'concert' %}bg-green-500{% elif event.category == 'exhibition' %}bg-yellow-500{% elif event.category == 'fundraising' %}bg-red-500{% else %}bg-gray-500{% endif %} text-white rounded-lg flex flex-col items-center justify-center">
+                  <span class="text-sm font-bold">{{ event.start_date|date:"M"|upper }}</span>
+                  <span class="text-lg font-bold">{{ event.start_date|date:"d" }}</span>
+                </div>
+                <div class="ml-4">
+                  <a href="{% url 'main:event_detail' event.slug %}" class="font-medium text-gray-900 hover:text-blue-600">{{ event.title }}</a>
+                  <p class="text-sm text-gray-500">{{ event.location }}</p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-8">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 mb-4">
+              <i class="fas fa-calendar-alt text-gray-400 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Upcoming Events</h3>
+            <p class="text-gray-600 mb-4">There are no upcoming events scheduled at this time.</p>
+            <a href="{% url 'main:create_event' %}" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+              <i class="fas fa-plus mr-2"></i>
+              Create Event
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Popular Events -->
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden mt-8">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-800">Popular Events</h3>
+      </div>
+      <div class="p-6">
+        {% if popular_events %}
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registrations</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                {% for event in popular_events %}
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10 {% if event.category == 'conference' %}bg-blue-100 text-blue-500{% elif event.category == 'workshop' %}bg-purple-100 text-purple-500{% elif event.category == 'concert' %}bg-green-100 text-green-500{% elif event.category == 'exhibition' %}bg-yellow-100 text-yellow-500{% else %}bg-gray-100 text-gray-500{% endif %} rounded-lg flex items-center justify-center">
+                          {% if event.category == 'conference' %}
+                            <i class="fas fa-laptop"></i>
+                          {% elif event.category == 'workshop' %}
+                            <i class="fas fa-tools"></i>
+                          {% elif event.category == 'concert' %}
+                            <i class="fas fa-music"></i>
+                          {% elif event.category == 'exhibition' %}
+                            <i class="fas fa-images"></i>
+                          {% elif event.category == 'fundraising' %}
+                            <i class="fas fa-hand-holding-heart"></i>
+                          {% else %}
+                            <i class="fas fa-calendar-alt"></i>
+                          {% endif %}
+                        </div>
+                        <div class="ml-4">
+                          <div class="text-sm font-medium text-gray-900">{{ event.title }}</div>
+                          <div class="text-sm text-gray-500">{{ event.get_category_display }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-900">{{ event.start_date|date:"M d, Y" }}</div>
+                      <div class="text-sm text-gray-500">{{ event.start_date|date:"h:i A" }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-900">{{ event.registration_count }}</div>
+                      {% if event.capacity > 0 %}
+                        <div class="w-24 bg-gray-200 rounded-full h-2 mt-1">
+                          <div class="{% if event.registration_count >= event.capacity %}bg-red-500{% elif event.registration_count >= event.capacity|floatformat:0|mul:0.75 %}bg-yellow-500{% else %}bg-green-500{% endif %} h-2 rounded-full" style="width: {% widthratio event.registration_count event.capacity 100 %}%"></div>
+                        </div>
+                      {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      {% if event.status == 'cancelled' %}
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>
+                      {% elif event.is_past_event %}
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Completed</span>
+                      {% elif event.is_ongoing %}
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Ongoing</span>
+                      {% else %}
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Upcoming</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-6 text-gray-500">No event data available</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Recent Registrations -->
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden mt-8">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-800">Recent Registrations</h3>
+      </div>
+      <div class="p-6">
+        {% if recent_registrations %}
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                {% for registration in recent_registrations %}
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="flex-shrink-0 h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
+                          {% if registration.user.profile.avatar %}
+                            <img src="{{ registration.user.profile.avatar.url }}" alt="{{ registration.user.username }}" class="h-8 w-8 rounded-full">
+                          {% else %}
+                            <span class="text-sm font-medium text-gray-600">{{ registration.user.username|make_list|first|upper }}</span>
+                          {% endif %}
+                        </div>
+                        <div class="ml-3">
+                          <div class="text-sm font-medium text-gray-900">{{ registration.user.get_full_name }}</div>
+                          <div class="text-xs text-gray-500">{{ registration.user.email }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-900">{{ registration.event.title }}</div>
+                      <div class="text-xs text-gray-500">{{ registration.event.start_date|date:"M d, Y" }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-900">{{ registration.updated_at|date:"M d, Y" }}</div>
+                      <div class="text-xs text-gray-500">{{ registration.updated_at|date:"h:i A" }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      {% if registration.status == 'confirmed' %}
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
+                      {% elif registration.status == 'pending' %}
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                      {% elif registration.status == 'cancelled' %}
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>
+                      {% elif registration.attended %}
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Attended</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-6 text-gray-500">No recent registrations</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

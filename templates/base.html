@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Event Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eef7ff',
+              100: '#d9edff',
+              200: '#bce0ff',
+              300: '#8ecdff',
+              400: '#59b0ff',
+              500: '#3498ff',
+              600: '#1a7af8',
+              700: '#1366e8',
+              800: '#1652bc',
+              900: '#194793',
+              950: '#0f2e5e',
+            },
+            accent: {
+              300: '#ffd166',
+              400: '#ffc233',
+              500: '#ffb400',
+              600: '#e09600',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .scrollbar-hide {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    
+    /* Thin overlay scrollbar for Chrome, Safari and Opera */
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(156, 163, 175, 0.5);
+      border-radius: 20px;
+    }
+    
+    /* Only show scrollbar on hover */
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      visibility: hidden;
+    }
+    
+    .scrollbar-thin:hover::-webkit-scrollbar-thumb {
+      visibility: visible;
+    }
+
+    /* Darker gradient background for sidebar */
+    .sidebar-gradient {
+      background: linear-gradient(135deg, #0f2e5e 0%, #0a1c38 100%);
+    }
+    
+    /* Active link highlight with glow effect */
+    .nav-link-active {
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 10px rgba(26, 122, 248, 0.5);
+    }
+
+    /* Message animation */
+    @keyframes slideIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-100%); opacity: 0; }
+    }
+    
+    .message-slide-in {
+      animation: slideIn 0.3s ease forwards;
+    }
+    
+    .message-slide-out {
+      animation: slideOut 0.3s ease forwards;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <!-- Django Messages -->
+  <div id="messages-container" class="fixed top-0 left-0 right-0 z-50 px-4 pt-4 flex flex-col items-center space-y-2">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="message-slide-in w-full max-w-lg bg-white rounded-lg shadow-lg border-l-4 
+          {% if message.tags == 'error' %}border-red-500{% elif message.tags == 'success' %}border-green-500{% elif message.tags == 'warning' %}border-yellow-500{% elif message.tags == 'info' %}border-blue-500{% else %}border-gray-500{% endif %} 
+          flex items-center justify-between p-4">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              {% if message.tags == 'error' %}
+                <i class="fas fa-times-circle text-red-500 text-lg"></i>
+              {% elif message.tags == 'success' %}
+                <i class="fas fa-check-circle text-green-500 text-lg"></i>
+              {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-triangle text-yellow-500 text-lg"></i>
+              {% elif message.tags == 'info' %}
+                <i class="fas fa-info-circle text-blue-500 text-lg"></i>
+              {% else %}
+                <i class="fas fa-bell text-gray-500 text-lg"></i>
+              {% endif %}
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-gray-700">{{ message }}</p>
+            </div>
+          </div>
+          <button type="button" class="close-message ml-4 flex-shrink-0 text-gray-400 hover:text-gray-500 focus:outline-none">
+            <span class="sr-only">Close</span>
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Sidebar and Main Content Container -->
+  <div class="flex flex-col md:flex-row min-h-screen">
+    <!-- Sidebar - Hidden on mobile by default, sticky on desktop -->
+    <aside id="sidebar" class="sidebar-gradient text-white w-full md:w-64 flex-shrink-0 md:flex md:flex-col hidden md:block md:sticky md:top-0 md:h-screen shadow-lg">
+      <div class="flex items-center justify-center h-20 bg-opacity-50 border-b border-primary-800">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+            <i class="fas fa-calendar-check text-primary-700 text-xl"></i>
+          </div>
+          <h1 class="text-xl font-bold text-white">Event Management</h1>
+        </div>
+      </div>
+      <div class="overflow-y-auto scrollbar-thin flex-grow">
+        <nav class="px-4 py-6">
+          {% if user.is_authenticated %}
+            <div class="mb-8">
+              <p class="text-xs uppercase tracking-wider text-primary-200 font-semibold mb-3 ml-4">Main</p>
+              <a href="{% url 'main:dashboard' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'dashboard' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-tachometer-alt mr-3 text-primary-300"></i>
+                <span>Dashboard</span>
+              </a>
+              <a href="{% url 'main:events' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'events' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-calendar-alt mr-3 text-primary-300"></i>
+                <span>Events</span>
+              </a>
+              <a href="{% url 'main:users' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'users' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-users mr-3 text-primary-300"></i>
+                <span>Users</span>
+              </a>
+            </div>
+            
+            <div class="mb-8">
+              <p class="text-xs uppercase tracking-wider text-primary-200 font-semibold mb-3 ml-4">Management</p>
+              <a href="{% url 'main:tickets' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'tickets' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-ticket-alt mr-3 text-primary-300"></i>
+                <span>Tickets</span>
+              </a>
+              <a href="{% url 'main:feedback' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'feedback' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-comment-alt mr-3 text-primary-300"></i>
+                <span>Feedback</span>
+              </a>
+              <a href="{% url 'main:analytics' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'analytics' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-chart-line mr-3 text-primary-300"></i>
+                <span>Analytics</span>
+              </a>
+            </div>
+            
+            <div class="mb-8">
+              <p class="text-xs uppercase tracking-wider text-primary-200 font-semibold mb-3 ml-4">System</p>
+              <a href="{% url 'main:settings' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'settings' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-cog mr-3 text-primary-300"></i>
+                <span>Settings</span>
+              </a>
+            </div>
+          {% else %}
+            <div class="mb-8">
+              <p class="text-xs uppercase tracking-wider text-primary-200 font-semibold mb-3 ml-4">Account</p>
+              <a href="{% url 'users:login' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'login' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-sign-in-alt mr-3 text-primary-300"></i>
+                <span>Sign In</span>
+              </a>
+              <a href="{% url 'users:signup' %}" class="flex items-center px-4 py-3 mb-2 rounded-lg {% if page == 'signup' %}nav-link-active{% endif %} hover:bg-white hover:bg-opacity-10 transition-all duration-200">
+                <i class="fas fa-user-plus mr-3 text-primary-300"></i>
+                <span>Create Account</span>
+              </a>
+            </div>
+          {% endif %}
+        </nav>
+      </div>
+      {% if user.is_authenticated %}
+        <div class="p-5 border-t border-primary-800">
+          <a href="{% url 'users:logout' %}" class="flex items-center text-white group hover:text-accent-300 transition-colors duration-200">
+            <div class="w-8 h-8 rounded-full bg-primary-800 group-hover:bg-accent-400 flex items-center justify-center mr-3 transition-colors duration-200">
+              <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <span>Logout</span>
+          </a>
+        </div>
+      {% endif %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+      <!-- Top Navigation -->
+      <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div class="flex items-center">
+            <button id="menuToggle" class="md:hidden mr-4 text-primary-700 hover:text-primary-500 transition-colors">
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center">
+              <h2 class="text-xl font-semibold text-gray-800">Admin <span class="text-primary-600">Dashboard</span></h2>
+              <span class="ml-3 px-2 py-1 bg-accent-300 text-xs font-bold text-primary-800 rounded-md">BETA</span>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            {% if user.is_authenticated %}
+              <button class="relative text-gray-500 hover:text-primary-600 transition-colors">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>
+              <div class="h-8 border-r border-gray-300 mx-2"></div>
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-semibold">
+                  {% if user.name %}
+                    {{ user.get_abbreviated_name|slice:":2"|upper }}
+                  {% else %}
+                    {{ user.email|slice:":2"|upper }}
+                  {% endif %}
+                </div>
+                <div class="hidden md:block">
+                  <p class="text-sm font-medium text-gray-700">{{ user.name|default:user.email }}</p>
+                  <p class="text-xs text-gray-500">
+                    {% if user.is_superuser %}
+                      Administrator
+                    {% elif user.is_staff %}
+                      Staff
+                    {% else %}
+                      User
+                    {% endif %}
+                  </p>
+                </div>
+                <div class="relative" id="profileDropdown">
+                  <button id="profileDropdownButton" class="text-gray-500 hover:text-primary-600">
+                    <i class="fas fa-chevron-down"></i>
+                  </button>
+                  <div id="profileDropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                    {% comment %} admin admin link if user is superuser {% endcomment %}
+                    {% if user.is_superuser %}
+                      <a href="{% url 'admin:index' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Dashboard</a>
+                    {% endif %}
+                    <div class="border-t border-gray-100"></div>
+                    <a href="{% url 'users:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="flex items-center space-x-3">
+                <a href="{% url 'users:login' %}" class="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">
+                  Sign In
+                </a>
+                <a href="{% url 'users:signup' %}" class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 transition-colors">
+                  Sign Up
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="overflow-y-auto scrollbar-thin">
+        {% block content %} {% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Mobile menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      
+      menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('hidden');
+      });
+      
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+        const isMobile = window.innerWidth < 768;
+        const isClickInsideSidebar = sidebar.contains(event.target);
+        const isClickOnMenuToggle = menuToggle.contains(event.target);
+        
+        if (isMobile && !isClickInsideSidebar && !isClickOnMenuToggle && !sidebar.classList.contains('hidden')) {
+          sidebar.classList.add('hidden');
+        }
+      });
+      
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) {
+          sidebar.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('hidden');
+        }
+      });
+
+      // Profile dropdown toggle
+      const profileDropdownButton = document.getElementById('profileDropdownButton');
+      const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+      
+      if (profileDropdownButton) {
+        profileDropdownButton.addEventListener('click', function(event) {
+          event.stopPropagation();
+          profileDropdownMenu.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+          const isClickInsideDropdown = document.getElementById('profileDropdown').contains(event.target);
+          
+          if (!isClickInsideDropdown && !profileDropdownMenu.classList.contains('hidden')) {
+            profileDropdownMenu.classList.add('hidden');
+          }
+        });
+      }
+      
+      // Message dismiss functionality
+      const messageElements = document.querySelectorAll('.close-message');
+      messageElements.forEach(function(element) {
+        element.addEventListener('click', function() {
+          const messageContainer = this.closest('div.message-slide-in');
+          messageContainer.classList.remove('message-slide-in');
+          messageContainer.classList.add('message-slide-out');
+          
+          // Remove the message after animation completes
+          setTimeout(function() {
+            messageContainer.remove();
+          }, 300);
+        });
+      });
+      
+      // Auto-dismiss messages after 5 seconds
+      setTimeout(function() {
+        const messages = document.querySelectorAll('#messages-container > div');
+        messages.forEach(function(message, index) {
+          // Stagger the dismissal for better UX
+          setTimeout(function() {
+            message.classList.remove('message-slide-in');
+            message.classList.add('message-slide-out');
+            
+            // Remove the message after animation completes
+            setTimeout(function() {
+              message.remove();
+            }, 300);
+          }, index * 200);
+        });
+      }, 5000);
+    });
+  </script>
+</body>
+</html>

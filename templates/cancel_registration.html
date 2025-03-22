@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-md mx-auto">
+    <!-- Breadcrumbs -->
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <a href="{% url 'main:dashboard' %}" class="text-gray-700 hover:text-primary-600 inline-flex items-center">
+            <i class="fas fa-home mr-2"></i>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <i class="fas fa-chevron-right text-gray-400 mx-2 text-sm"></i>
+            <a href="{% url 'main:event_detail' event.slug %}" class="text-gray-700 hover:text-primary-600">
+              {{ event.title }}
+            </a>
+          </div>
+        </li>
+        <li aria-current="page">
+          <div class="flex items-center">
+            <i class="fas fa-chevron-right text-gray-400 mx-2 text-sm"></i>
+            <span class="text-gray-500">Cancel Registration</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Confirmation Card -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="bg-red-50 p-6 text-center">
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+          <i class="fas fa-calendar-times text-red-600 text-2xl"></i>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Cancel Registration</h2>
+        <p class="text-gray-600">Are you sure you want to cancel your registration for this event?</p>
+      </div>
+      
+      <!-- Event Summary -->
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-md font-medium text-gray-900 mb-3">Event Details</h3>
+        <div class="flex items-start">
+          <div class="flex-shrink-0 mr-4">
+            <div class="w-12 h-12 rounded-md overflow-hidden bg-gray-100">
+              {% if event.image %}
+                <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-full h-full object-cover">
+              {% else %}
+                <div class="w-full h-full flex items-center justify-center bg-primary-100">
+                  <i class="fas fa-calendar-alt text-primary-500"></i>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-gray-900">{{ event.title }}</h4>
+            <div class="flex flex-wrap items-center text-xs text-gray-600 mt-1">
+              <span class="flex items-center mr-3 mb-1">
+                <i class="fas fa-calendar mr-1 text-primary-500"></i>
+                {{ event.start_date|date:"F j, Y" }}
+              </span>
+              <span class="flex items-center mr-3 mb-1">
+                <i class="fas fa-clock mr-1 text-primary-500"></i>
+                {{ event.start_date|date:"g:i A" }}
+              </span>
+              <span class="flex items-center mb-1">
+                <i class="fas fa-map-marker-alt mr-1 text-primary-500"></i>
+                {{ event.location }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Cancellation Confirmation -->
+      <div class="p-6">
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-yellow-700">
+                Once cancelled, your spot may be given to someone else and you'll need to register again if you change your mind.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <form method="POST" class="flex items-center justify-end space-x-4">
+          {% csrf_token %}
+          <a href="{% url 'main:event_detail' event.slug %}" class="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            Keep Registration
+          </a>
+          <button type="submit" class="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            Cancel Registration
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

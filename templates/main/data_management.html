@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <!-- Navbar -->
+  <header class="bg-blue-600 text-white py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+      <h1 class="text-2xl font-bold">Event Management</h1>
+      <nav>
+        <a href="#" class="text-lg text-white hover:underline px-4">Home</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Dashboard</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8 px-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Events</h2>
+
+    <!-- Add Event Form -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Add New Event</h3>
+      <form action="#" method="POST" class="space-y-4">
+        <div>
+          <label for="event-name" class="block text-lg font-medium text-gray-700">Event Name</label>
+          <input type="text" id="event-name" name="event-name" placeholder="Enter event name" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="date" class="block text-lg font-medium text-gray-700">Date</label>
+          <input type="date" id="date" name="date" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="location" class="block text-lg font-medium text-gray-700">Location</label>
+          <input type="text" id="location" name="location" placeholder="Enter location" class="w-full border border-gray-300 rounded-lg p-2 text-lg">
+        </div>
+        <div>
+          <label for="description" class="block text-lg font-medium text-gray-700">Description</label>
+          <textarea id="description" name="description" placeholder="Enter event description" class="w-full border border-gray-300 rounded-lg p-2 text-lg"></textarea>
+        </div>
+        <button type="submit" class="bg-blue-500 text-white text-lg px-6 py-2 rounded-lg hover:bg-blue-600">Add Event</button>
+      </form>
+    </div>
+
+    <!-- Events Table -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Existing Events</h3>
+      <div class="overflow-x-auto">
+        <table class="table-auto w-full border border-gray-200">
+          <thead>
+            <tr class="bg-gray-100 text-gray-700">
+              <th class="px-4 py-2 border">Event Name</th>
+              <th class="px-4 py-2 border">Date</th>
+              <th class="px-4 py-2 border">Location</th>
+              <th class="px-4 py-2 border">Description</th>
+              <th class="px-4 py-2 border">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="text-gray-700">
+              <td class="px-4 py-2 border">Music Concert</td>
+              <td class="px-4 py-2 border">2025-03-15</td>
+              <td class="px-4 py-2 border">New York</td>
+              <td class="px-4 py-2 border">A live concert featuring popular bands.</td>
+              <td class="px-4 py-2 border">
+                <button class="bg-yellow-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-yellow-600">Edit</button>
+                <button class="bg-red-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-red-600">Delete</button>
+              </td>
+            </tr>
+            <tr class="bg-gray-50 text-gray-700">
+              <td class="px-4 py-2 border">Tech Conference</td>
+              <td class="px-4 py-2 border">2025-04-10</td>
+              <td class="px-4 py-2 border">San Francisco</td>
+              <td class="px-4 py-2 border">A conference on emerging technologies.</td>
+              <td class="px-4 py-2 border">
+                <button class="bg-yellow-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-yellow-600">Edit</button>
+                <button class="bg-red-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-red-600">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Visualization</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <!-- Navbar -->
+  <header class="bg-blue-600 text-white py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+      <h1 class="text-2xl font-bold">Data Visualization</h1>
+      <nav>
+        <a href="#" class="text-lg text-white hover:underline px-4">Home</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Dashboard</a>
+        <a href="#" class="text-lg text-white hover:underline px-4">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8 px-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Event Statistics & Trends</h2>
+
+    <!-- Grid Layout for Charts and Tables -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Chart 1 -->
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Event Trends Over Time</h3>
+        <div class="h-64 bg-gray-100 flex items-center justify-center text-gray-500">
+          <!-- Placeholder for Chart -->
+          <p>Chart Placeholder (e.g., Line Chart)</p>
+        </div>
+      </div>
+
+      <!-- Chart 2 -->
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Events by Location</h3>
+        <div class="h-64 bg-gray-100 flex items-center justify-center text-gray-500">
+          <!-- Placeholder for Chart -->
+          <p>Chart Placeholder (e.g., Map or Bar Chart)</p>
+        </div>
+      </div>
+
+      <!-- Chart 3 -->
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Events by Popularity</h3>
+        <div class="h-64 bg-gray-100 flex items-center justify-center text-gray-500">
+          <!-- Placeholder for Chart -->
+          <p>Chart Placeholder (e.g., Pie Chart)</p>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Detailed Event Data</h3>
+        <div class="overflow-x-auto">
+          <table class="table-auto w-full border border-gray-200">
+            <thead>
+              <tr class="bg-gray-100 text-gray-700">
+                <th class="px-4 py-2 border">Date</th>
+                <th class="px-4 py-2 border">Location</th>
+                <th class="px-4 py-2 border">Severity</th>
+                <th class="px-4 py-2 border">Casualties</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="text-gray-700">
+                <td class="px-4 py-2 border">2025-02-20</td>
+                <td class="px-4 py-2 border">New York</td>
+                <td class="px-4 py-2 border">High</td>
+                <td class="px-4 py-2 border">5</td>
+              </tr>
+              <tr class="bg-gray-50 text-gray-700">
+                <td class="px-4 py-2 border">2025-02-21</td>
+                <td class="px-4 py-2 border">Los Angeles</td>
+                <td class="px-4 py-2 border">Medium</td>
+                <td class="px-4 py-2 border">2</td>
+              </tr>
+              <tr class="text-gray-700">
+                <td class="px-4 py-2 border">2025-02-22</td>
+                <td class="px-4 py-2 border">Chicago</td>
+                <td class="px-4 py-2 border">Low</td>
+                <td class="px-4 py-2 border">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
