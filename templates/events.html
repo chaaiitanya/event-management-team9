@@ -105,7 +105,7 @@
                         {% endif %}
                       </div>
                       <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">{{ event.title }}</div>
+                        <div class="text-sm font-medium text-gray-900"><a href="{% url 'main:event_detail' event.slug %}">{{ event.title }}</a></div>
                         <div class="text-sm text-gray-500">{{ event.get_category_display }}</div>
                       </div>
                     </div>

@@ -1,0 +1,84 @@
+<div id="comment-{{ comment.id }}" class="bg-white rounded-lg shadow-sm p-4 mb-4">
+    <div class="flex items-start">
+      <div class="flex-shrink-0">
+        {% if comment.user.profile.avatar %}
+          <img class="h-10 w-10 rounded-full" src="{{ comment.user.profile.avatar.url }}" alt="{{ comment.user.username }}">
+        {% else %}
+          <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+            <span class="text-primary-600 font-semibold">{{ comment.user.username|make_list|first|upper }}</span>
+          </div>
+        {% endif %}
+      </div>
+      <div class="ml-3 flex-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="text-sm font-medium text-gray-900">{{ comment.user.get_full_name|default:comment.user.username }}</h4>
+            <p class="text-xs text-gray-500">
+              {{ comment.created_at|date:"M d, Y, g:i a" }}
+              {% if comment.is_edited %}
+                <span class="ml-1">(edited)</span>
+              {% endif %}
+            </p>
+          </div>
+          {% if user.is_authenticated and user == comment.user or user.is_staff %}
+            <div class="dropdown relative">
+              <button class="text-gray-400 hover:text-gray-600 focus:outline-none" id="dropdownMenuButton-{{ comment.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <ul class="dropdown-menu min-w-max absolute hidden bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg shadow-lg mt-1 m-0 bg-clip-padding border-none" aria-labelledby="dropdownMenuButton-{{ comment.id }}">
+                {% if user == comment.user %}
+                  <li>
+                    <a href="{% url 'main:edit_comment' comment.id %}" class="edit-comment-btn dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100" data-comment-id="{{ comment.id }}">
+                      <i class="fas fa-edit mr-2"></i> Edit
+                    </a>
+                  </li>
+                {% endif %}
+                <li>
+                  <a href="{% url 'main:delete_comment' comment.id %}" class="delete-comment-btn dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100" data-comment-id="{{ comment.id }}">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                  </a>
+                </li>
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+        
+        <div class="comment-content mt-1 text-sm text-gray-700">
+          {{ comment.content|linebreaks }}
+        </div>
+        
+        {% if user.is_authenticated %}
+          <div class="mt-2 flex items-center">
+            <button class="reply-btn text-xs text-primary-600 hover:text-primary-800" data-comment-id="{{ comment.id }}">
+              <i class="fas fa-reply mr-1"></i> Reply
+            </button>
+          </div>
+          
+          <div id="reply-form-{{ comment.id }}" class="reply-form mt-3 hidden">
+            <form method="post" action="{% url 'main:event_detail' comment.event.slug %}" class="reply-form-inner">
+              {% csrf_token %}
+              {{ reply_form.content }}
+              <input type="hidden" name="parent_id" value="{{ comment.id }}">
+              <div class="flex justify-end mt-2">
+                <button type="button" class="cancel-reply-btn px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-xs mr-2">
+                  Cancel
+                </button>
+                <button type="submit" name="reply_submit" class="px-3 py-1 bg-primary-600 text-white rounded-md text-xs">
+                  Submit Reply
+                </button>
+              </div>
+            </form>
+          </div>
+        {% endif %}
+        
+        {% if comment.get_replies %}
+          <div class="replies mt-3 pl-4 border-l-2 border-gray-100">
+            {% for reply in comment.get_replies %}
+              {% include 'main/includes/reply.html' with comment=reply %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  

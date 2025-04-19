@@ -15,7 +15,15 @@ urlpatterns = [
     path('my-registrations/', views.my_registrations, name='my_registrations'),
     path('users/', views.users, name='users'),
     path('tickets/', views.tickets, name='tickets'),
-    path('feedback/', views.feedback, name='feedback'),
-    path('analytics/', views.analytics, name='analytics'),
-    path('settings/', views.settings, name='settings'),
+    path('tickets/create/', views.create_ticket, name='create_ticket'),
+    path('tickets/<int:ticket_id>/view/', views.view_ticket, name='view_ticket'),
+    path('tickets/<int:ticket_id>/edit/', views.edit_ticket, name='edit_ticket'),
+    path('tickets/<int:ticket_id>/delete/', views.delete_ticket, name='delete_ticket'),
+    path('account-information/', views.all_settings, name='settings'),
+    path('comments/', views.comments_management, name='comments_management'),
+    path('comments/reply/<int:comment_id>/', views.reply_comment, name='reply_comment'),
+    path('comments/edit/<int:comment_id>/', views.edit_comment, name='edit_comment'),
+    path('comments/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
+    path('comments/export/', views.export_comments, name='export_comments'),
+
 ]

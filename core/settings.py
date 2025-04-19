@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-)w6yjg4-y9v0y94)lj0@(jni@^v1g5q2k^x8rs14%@spfgxg6r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -146,3 +146,13 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
 LOGIN_URL = 'users:login'
+
+# default backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=587
+EMAIL_HOST_USER="secureprojectgroup5@gmail.com"
+EMAIL_HOST_PASSWORD="jhrs yarq oicm ovvs"
+EMAIL_USE_TLS=True
+
+SITE_URL = "https://event-management-team9.onrender.com"

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Cancelled</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #1a73e8;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hi {{ user.name|default:user.email }},</h2>
+        <p>Your registration for the following event has been cancelled:</p>
+
+        <h3>{{ event.title }}</h3>
+        <p><strong>Date:</strong> {{ event.start_date|date:"F j, Y" }}</p>
+        <p><strong>Time:</strong> {{ event.start_date|date:"g:i A" }}{% if event.end_time %} - {{ event.end_time|date:"g:i A" }}{% endif %}</p>
+        {% if event.location %}
+            <p><strong>Location:</strong> {{ event.location }}</p>
+        {% endif %}
+
+        <p>If this was a mistake or you change your mind, you may register again if spots are still available.</p>
+
+        <a class="btn" href="{{ event_url }}">Register Again</a>
+
+        <div class="footer">
+            <p>We're sorry to see you go. If you have any questions, feel free to contact us.</p>
+            <p>&copy; {{ event.start_date|date:"Y" }} {{ settings.SITE_NAME|default:"Event Platform" }}</p>
+        </div>
+    </div>
+</body>
+</html>

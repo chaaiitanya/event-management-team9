@@ -3,336 +3,242 @@
 {% load static %}
 
 {% block content %}
-  <div class="p-6">
-    <!-- Page Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-800">Analytics Dashboard <span class="bg-orange-500 text-white px-2">IN PROGRESS</span></h1>
-        <p class="text-gray-600 mt-1">Track performance metrics and event insights</p>
-      </div>
-      <div class="mt-4 md:mt-0 flex space-x-3">
-        <div class="relative">
-          <select class="px-4 py-2 border border-gray-300 rounded-lg appearance-none pr-10">
-            <option value="30">Last 30 Days</option>
-            <option value="60">Last 60 Days</option>
-            <option value="90">Last 90 Days</option>
-            <option value="year">This Year</option>
-            <option value="all">All Time</option>
-          </select>
-          <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-            <i class="fas fa-chevron-down text-gray-500"></i>
-          </div>
-        </div>
-        <a href="#" class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex items-center">
-          <i class="fas fa-download mr-2"></i>
-          <span>Export Data</span>
-        </a>
-      </div>
+<div class="p-4 sm:p-6">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Event Dashboard</h1>
+      <p class="text-sm text-gray-600">Overview of events and task status</p>
     </div>
-
-    <!-- Key Metrics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-medium text-gray-500">Total Revenue</h3>
-          <span class="text-green-500 text-sm font-medium flex items-center">
-            <i class="fas fa-arrow-up mr-1"></i>
-            24%
-          </span>
-        </div>
-        <div class="flex items-baseline">
-          <p class="text-2xl font-bold text-gray-900">$42,580</p>
-          <p class="ml-2 text-sm text-gray-500">from $34,320</p>
-        </div>
-        <div class="mt-4 h-2 bg-gray-200 rounded-full">
-          <div class="h-2 bg-green-500 rounded-full" style="width: 75%"></div>
-        </div>
-      </div>
-      
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-medium text-gray-500">Ticket Sales</h3>
-          <span class="text-green-500 text-sm font-medium flex items-center">
-            <i class="fas fa-arrow-up mr-1"></i>
-            12%
-          </span>
-        </div>
-        <div class="flex items-baseline">
-          <p class="text-2xl font-bold text-gray-900">3,845</p>
-          <p class="ml-2 text-sm text-gray-500">from 3,433</p>
-        </div>
-        <div class="mt-4 h-2 bg-gray-200 rounded-full">
-          <div class="h-2 bg-blue-500 rounded-full" style="width: 65%"></div>
-        </div>
-      </div>
-      
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-medium text-gray-500">Conversion Rate</h3>
-          <span class="text-green-500 text-sm font-medium flex items-center">
-            <i class="fas fa-arrow-up mr-1"></i>
-            8%
-          </span>
-        </div>
-        <div class="flex items-baseline">
-          <p class="text-2xl font-bold text-gray-900">64.2%</p>
-          <p class="ml-2 text-sm text-gray-500">from 59.5%</p>
-        </div>
-        <div class="mt-4 h-2 bg-gray-200 rounded-full">
-          <div class="h-2 bg-purple-500 rounded-full" style="width: 64%"></div>
-        </div>
-      </div>
-      
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-medium text-gray-500">Avg. Ticket Price</h3>
-          <span class="text-red-500 text-sm font-medium flex items-center">
-            <i class="fas fa-arrow-down mr-1"></i>
-            3%
-          </span>
-        </div>
-        <div class="flex items-baseline">
-          <p class="text-2xl font-bold text-gray-900">$85.50</p>
-          <p class="ml-2 text-sm text-gray-500">from $88.20</p>
-        </div>
-        <div class="mt-4 h-2 bg-gray-200 rounded-full">
-          <div class="h-2 bg-yellow-500 rounded-full" style="width: 45%"></div>
-        </div>
-      </div>
+    <div class="mt-3 sm:mt-0">
+      <select id="time-range" class="px-3 py-1 text-sm border border-gray-300 rounded-lg">
+        <option value="7">Last 7 Days</option>
+        <option value="30" selected>Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+      </select>
     </div>
+  </div>
 
-    <!-- Charts Row 1 -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-      <!-- Revenue Chart -->
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-lg font-medium text-gray-900">Revenue Over Time</h3>
-          <div class="flex space-x-2">
-            <button class="px-3 py-1 bg-primary-50 text-primary-600 rounded-md text-sm">Daily</button>
-            <button class="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md text-sm">Weekly</button>
-            <button class="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md text-sm">Monthly</button>
-          </div>
-        </div>
-        <!-- Chart Placeholder -->
-        <div class="h-64 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
-          <div class="text-center">
-            <i class="fas fa-chart-line text-gray-400 text-4xl mb-3"></i>
-            <p class="text-gray-500">Revenue chart would render here</p>
-            <p class="text-sm text-gray-400">Using chart.js or similar library</p>
-          </div>
-        </div>
+  <!-- Event Status Cards -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-lg shadow-sm p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-medium text-gray-500">Total Events</h3>
+        <span class="text-blue-500 text-xs"><i class="fas fa-calendar-alt"></i></span>
       </div>
-      
-      <!-- Ticket Sales by Category -->
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-lg font-medium text-gray-900">Ticket Sales by Category</h3>
-          <div>
-            <select class="px-3 py-1 border border-gray-300 rounded-md text-sm">
-              <option value="all">All Events</option>
-              <option value="tech">Tech Conference</option>
-              <option value="music">Music Festival</option>
-              <option value="charity">Charity Gala</option>
-            </select>
-          </div>
-        </div>
-        <!-- Chart Placeholder -->
-        <div class="h-64 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
-          <div class="text-center">
-            <i class="fas fa-chart-pie text-gray-400 text-4xl mb-3"></i>
-            <p class="text-gray-500">Pie chart would render here</p>
-            <p class="text-sm text-gray-400">Using chart.js or similar library</p>
-          </div>
-        </div>
-      </div>
+      <p class="text-xl font-bold text-gray-900">{{ stats.total_events }}</p>
     </div>
-
-    <!-- Top Performing Events Table -->
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h3 class="text-lg font-medium text-gray-900">Top Performing Events</h3>
+    
+    <div class="bg-white rounded-lg shadow-sm p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-medium text-gray-500">Upcoming</h3>
+        <span class="text-yellow-500 text-xs"><i class="fas fa-hourglass"></i></span>
       </div>
+      <p class="text-xl font-bold text-yellow-600">{{ stats.upcoming_events }}</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-sm p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-medium text-gray-500">Ongoing</h3>
+        <span class="text-green-500 text-xs"><i class="fas fa-play-circle"></i></span>
+      </div>
+      <p class="text-xl font-bold text-green-600">{{ stats.ongoing_events }}</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-sm p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-medium text-gray-500">Past</h3>
+        <span class="text-gray-500 text-xs"><i class="fas fa-history"></i></span>
+      </div>
+      <p class="text-xl font-bold text-gray-600">{{ stats.past_events }}</p>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- Event Status Chart -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+      <h3 class="text-sm font-medium text-gray-700 mb-4">Events by Status</h3>
+      <div id="event-status-chart" class="h-64"></div>
+    </div>
+    
+    <!-- Task Status Chart (added as requested) -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+      <h3 class="text-sm font-medium text-gray-700 mb-4">Task Status</h3>
+      <div id="task-status-chart" class="h-64"></div>
+    </div>
+  </div>
+
+  <!-- Upcoming Events Table -->
+  <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-sm font-medium text-gray-700">Upcoming Events</h3>
+      <a href="{% url 'main:events' %}" class="text-xs text-primary-600 hover:text-primary-800">View All</a>
+    </div>
+    
+    {% if upcoming_events %}
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Event
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Revenue
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Date
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Tickets Sold
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Category
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Conversion Rate
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Avg. Rating
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Registrations
               </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <!-- Event 1 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 bg-blue-100 text-blue-500 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-laptop"></i>
+            {% for event in upcoming_events %}
+              <tr>
+                <td class="px-4 py-2 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="text-sm font-medium text-gray-900">
+                      <a href="{{ event.get_absolute_url }}" class="hover:text-primary-600">{{ event.title }}</a>
+                    </div>
                   </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">Tech Conference 2025</div>
-                    <div class="text-sm text-gray-500">Mar 25, 2025</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">$18,450</div>
-                <div class="text-sm text-green-500">+24%</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">845</div>
-                <div class="text-sm text-green-500">+18%</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">72.5%</div>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
-                  <div class="bg-green-500 h-2 rounded-full" style="width: 72.5%"></div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex text-yellow-400">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star-half-alt"></i>
-                  <span class="ml-1 text-gray-600">4.5</span>
-                </div>
-              </td>
-            </tr>
-            
-            <!-- Event 2 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 bg-purple-100 text-purple-500 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-music"></i>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">Music Festival</div>
-                    <div class="text-sm text-gray-500">Apr 10, 2025</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">$12,750</div>
-                <div class="text-sm text-green-500">+15%</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">680</div>
-                <div class="text-sm text-green-500">+12%</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">68.2%</div>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
-                  <div class="bg-green-500 h-2 rounded-full" style="width: 68.2%"></div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex text-yellow-400">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="far fa-star"></i>
-                  <span class="ml-1 text-gray-600">4.0</span>
-                </div>
-              </td>
-            </tr>
-            
-            <!-- Event 3 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 bg-green-100 text-green-500 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-hand-holding-heart"></i>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">Charity Gala</div>
-                    <div class="text-sm text-gray-500">Apr 15, 2025</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">$8,400</div>
-                <div class="text-sm text-green-500">+32%</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">210</div>
-                <div class="text-sm text-green-500">+5%</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">58.3%</div>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
-                  <div class="bg-yellow-500 h-2 rounded-full" style="width: 58.3%"></div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex text-yellow-400">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star-half-alt"></i>
-                  <span class="ml-1 text-gray-600">4.7</span>
-                </div>
-              </td>
-            </tr>
-            
-            <!-- Event 4 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 bg-red-100 text-red-500 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-utensils"></i>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">Food Festival</div>
-                    <div class="text-sm text-gray-500">May 15, 2025</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">$6,850</div>
-                <div class="text-sm text-red-500">-8%</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">342</div>
-                <div class="text-sm text-red-500">-12%</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">45.6%</div>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
-                  <div class="bg-red-500 h-2 rounded-full" style="width: 45.6%"></div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex text-yellow-400">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="far fa-star"></i>
-                  <i class="far fa-star"></i>
-                  <span class="ml-1 text-gray-600">3.2</span>
-                </div>
-              </td>
-            </tr>
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ event.start_date|date:"M d, Y" }}</div>
+                  <div class="text-xs text-gray-500">{{ event.start_date|date:"g:i A" }}</div>
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap">
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                    {% if event.category == 'academic' %}bg-blue-100 text-blue-800
+                    {% elif event.category == 'social' %}bg-purple-100 text-purple-800
+                    {% elif event.category == 'workshop' %}bg-green-100 text-green-800
+                    {% elif event.category == 'conference' %}bg-yellow-100 text-yellow-800
+                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {{ event.get_category_display }}
+                  </span>
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                  {{ event.registration_count }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
-    </div>
-
+    {% else %}
+      <div class="text-center py-4 text-gray-500 text-sm">
+        No upcoming events
+      </div>
+    {% endif %}
   </div>
+
+  <!-- Events by Category -->
+  <div class="bg-white rounded-lg shadow-sm p-4">
+    <h3 class="text-sm font-medium text-gray-700 mb-4">Events by Category</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
+      {% for category in category_stats %}
+        <div class="text-center">
+          <div class="mx-auto w-12 h-12 rounded-full 
+            {% if category.name == 'academic' %}bg-blue-100 text-blue-500
+            {% elif category.name == 'social' %}bg-purple-100 text-purple-500
+            {% elif category.name == 'workshop' %}bg-green-100 text-green-500
+            {% elif category.name == 'conference' %}bg-yellow-100 text-yellow-500
+            {% else %}bg-gray-100 text-gray-500{% endif %}
+            flex items-center justify-center mb-2">
+            {% if category.name == 'academic' %}
+              <i class="fas fa-graduation-cap"></i>
+            {% elif category.name == 'social' %}
+              <i class="fas fa-users"></i>
+            {% elif category.name == 'workshop' %}
+              <i class="fas fa-tools"></i>
+            {% elif category.name == 'conference' %}
+              <i class="fas fa-microphone"></i>
+            {% else %}
+              <i class="fas fa-calendar-alt"></i>
+            {% endif %}
+          </div>
+          <h4 class="text-sm font-medium">{{ category.display_name }}</h4>
+          <p class="text-lg font-bold">{{ category.total_events }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Event Status Chart
+    const statusCtx = document.getElementById('event-status-chart').getContext('2d');
+    const statusData = {
+      labels: ['Published', 'Draft', 'Cancelled'],
+      datasets: [{
+        data: [{{ stats.published_events }}, {{ stats.draft_events }}, {{ stats.cancelled_events }}],
+        backgroundColor: ['#10B981', '#3B82F6', '#EF4444'],
+        borderWidth: 1
+      }]
+    };
+    
+    new Chart(statusCtx, {
+      type: 'doughnut',
+      data: statusData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              boxWidth: 12,
+              font: {
+                size: 12
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Task Status Chart
+    const taskCtx = document.getElementById('task-status-chart').getContext('2d');
+    const taskData = {
+      labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
+      datasets: [{
+        data: [{{ task_stats.completed }}, {{ task_stats.in_progress }}, {{ task_stats.pending }}, {{ task_stats.overdue }}],
+        backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
+        borderWidth: 1
+      }]
+    };
+    
+    new Chart(taskCtx, {
+      type: 'doughnut',
+      data: taskData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              boxWidth: 12,
+              font: {
+                size: 12
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Handle time range change
+    document.getElementById('time-range').addEventListener('change', function() {
+      const days = this.value;
+      window.location.href = `{% url 'main:analytics' %}?days=${days}`;
+    });
+  });
+</script>
+{% endblock %}
 {% endblock %}

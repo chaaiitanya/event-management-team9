@@ -1,5 +1,5 @@
 from django import forms
-from apps.main.models import Event, Registration
+from apps.main.models import Event, Registration, Comment
 from django.utils.text import slugify
 from django.utils import timezone
 import random
@@ -258,3 +258,45 @@ class RegistrationForm(forms.ModelForm):
         # For example, checking if the event is full
         
         return cleaned_data
+
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500',
+            'rows': '4',
+            'placeholder': 'Share your thoughts about this event...',
+        }),
+        label='',
+    )
+    
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+class ReplyForm(forms.ModelForm):
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500',
+            'rows': '2',
+            'placeholder': 'Reply to this comment...',
+        }),
+        label='',
+    )
+    
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+class EditCommentForm(forms.ModelForm):
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500',
+            'rows': '4',
+        }),
+        label='',
+    )
+    
+    class Meta:
+        model = Comment
+        fields = ['content']
+

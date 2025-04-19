@@ -7,36 +7,38 @@
     <!-- Page Header with Action Button -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-800">Tickets Management <span class="bg-orange-500 text-white px-2">IN PROGRESS</span></h1>
+        <h1 class="text-2xl font-bold text-gray-800">Tickets Management</h1>
         <p class="text-gray-600 mt-1">View and manage event tickets</p>
       </div>
-      <a href="#" class="mt-4 md:mt-0 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center">
+      <button id="openTicketModal" class="mt-4 md:mt-0 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center">
         <i class="fas fa-ticket-alt mr-2"></i>
         <span>Create Ticket Type</span>
-      </a>
+      </button>
     </div>
 
     <!-- Simple Filter -->
     <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-      <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
-        <div class="flex-grow">
-          <input type="text" placeholder="Search tickets..." class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+      <form method="get" action="{% url 'main:tickets' %}">
+        <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+          <div class="flex-grow">
+            <input type="text" name="search" placeholder="Search tickets..." class="w-full px-4 py-2 border border-gray-300 rounded-lg" value="{{ request.GET.search|default:'' }}">
+          </div>
+          <div>
+            <select name="event" class="px-4 py-2 border border-gray-300 rounded-lg">
+              <option value="">All Events</option>
+              {% for event in events %}
+                <option value="{{ event.id }}" {% if request.GET.event == event.id|stringformat:'i' %}selected{% endif %}>{{ event.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <button type="submit" class="px-4 py-2 bg-primary-500 text-white rounded-lg">
+              <i class="fas fa-filter mr-2"></i>
+              <span>Filter</span>
+            </button>
+          </div>
         </div>
-        <div>
-          <select class="px-4 py-2 border border-gray-300 rounded-lg">
-            <option value="">All Events</option>
-            <option value="tech">Tech Conference</option>
-            <option value="music">Music Festival</option>
-            <option value="charity">Charity Gala</option>
-          </select>
-        </div>
-        <div>
-          <button class="px-4 py-2 bg-primary-500 text-white rounded-lg">
-            <i class="fas fa-filter mr-2"></i>
-            <span>Filter</span>
-          </button>
-        </div>
-      </div>
+      </form>
     </div>
 
     <!-- Tickets Table -->
@@ -54,145 +56,87 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <!-- Ticket 1 -->
+            {% for ticket in tickets %}
             <tr>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">#TK-1001</div>
+                <div class="text-sm font-medium text-gray-900">{{ ticket.ticket_id }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Tech Conference</div>
-                <div class="text-sm text-gray-500">Mar 25, 2025</div>
+                <div class="text-sm text-gray-900">{{ ticket.event.title }}</div>
+                <div class="text-sm text-gray-500">{{ ticket.event.start_date|date:"M d, Y" }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                  VIP
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                  {% if ticket.type == 'VIP' %}bg-blue-100 text-blue-800
+                  {% elif ticket.type == 'Premium' %}bg-purple-100 text-purple-800
+                  {% elif ticket.type == 'Standard' %}bg-gray-100 text-gray-800
+                  {% else %}bg-green-100 text-green-800{% endif %}">
+                  {{ ticket.type }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">$150.00</div>
+                <div class="text-sm text-gray-900">${{ ticket.price }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Available
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                  {% if ticket.status == 'available' %}bg-green-100 text-green-800
+                  {% elif ticket.status == 'limited' %}bg-yellow-100 text-yellow-800
+                  {% elif ticket.status == 'sold' %}bg-red-100 text-red-800
+                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ ticket.get_status_display }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3"><i class="fas fa-eye"></i></a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></a>
-                <a href="#" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></a>
+                <a href="{% url 'main:view_ticket' ticket.id %}" class="text-primary-600 hover:text-primary-900 mr-3"><i class="fas fa-eye"></i></a>
+                <a href="{% url 'main:edit_ticket' ticket.id %}" class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></a>
+                <button onclick="confirmDelete('{{ ticket.id }}')" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
               </td>
             </tr>
-            
-            <!-- Ticket 2 -->
+            {% empty %}
             <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">#TK-1002</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Tech Conference</div>
-                <div class="text-sm text-gray-500">Mar 25, 2025</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                  Standard
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">$75.00</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Available
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3"><i class="fas fa-eye"></i></a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></a>
-                <a href="#" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></a>
+              <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                <div class="flex flex-col items-center">
+                  <i class="fas fa-ticket-alt text-gray-300 text-4xl mb-2"></i>
+                  <p>No tickets found</p>
+                </div>
               </td>
             </tr>
-            
-            <!-- Ticket 3 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">#TK-1003</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Music Festival</div>
-                <div class="text-sm text-gray-500">Apr 10, 2025</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                  Premium
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">$120.00</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                  Limited
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3"><i class="fas fa-eye"></i></a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></a>
-                <a href="#" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></a>
-              </td>
-            </tr>
-            
-            <!-- Ticket 4 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">#TK-1004</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Charity Gala</div>
-                <div class="text-sm text-gray-500">Apr 15, 2025</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Regular
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">$200.00</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                  Sold Out
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3"><i class="fas fa-eye"></i></a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></a>
-                <a href="#" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></a>
-              </td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
       
-      <!-- Simple Pagination -->
+      <!-- Pagination -->
+      {% if tickets.has_other_pages %}
       <div class="bg-white px-4 py-3 border-t border-gray-200 flex items-center justify-between">
         <div>
-          <p class="text-sm text-gray-700">Showing 1-4 of 16 tickets</p>
+          <p class="text-sm text-gray-700">Showing {{ tickets.start_index }} to {{ tickets.end_index }} of {{ tickets.paginator.count }} tickets</p>
         </div>
         <div>
           <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-            <a href="#" class="px-2 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500">
+            {% if tickets.has_previous %}
+            <a href="?page={{ tickets.previous_page_number }}" class="px-2 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500">
               <i class="fas fa-chevron-left"></i>
             </a>
-            <a href="#" class="px-4 py-2 border border-primary-500 bg-primary-50 text-primary-600">1</a>
-            <a href="#" class="px-4 py-2 border border-gray-300 bg-white text-gray-500">2</a>
-            <a href="#" class="px-4 py-2 border border-gray-300 bg-white text-gray-500">3</a>
-            <a href="#" class="px-4 py-2 border border-gray-300 bg-white text-gray-500">4</a>
-            <a href="#" class="px-2 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500">
+            {% endif %}
+            
+            {% for i in tickets.paginator.page_range %}
+              {% if tickets.number == i %}
+              <span class="px-4 py-2 border border-primary-500 bg-primary-50 text-primary-600">{{ i }}</span>
+              {% else %}
+              <a href="?page={{ i }}" class="px-4 py-2 border border-gray-300 bg-white text-gray-500">{{ i }}</a>
+              {% endif %}
+            {% endfor %}
+            
+            {% if tickets.has_next %}
+            <a href="?page={{ tickets.next_page_number }}" class="px-2 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500">
               <i class="fas fa-chevron-right"></i>
             </a>
+            {% endif %}
           </nav>
         </div>
       </div>
+      {% endif %}
     </div>
 
     <!-- Basic Stats -->
@@ -204,7 +148,7 @@
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-500">Total Tickets</p>
-            <p class="text-2xl font-semibold text-gray-800">3,845</p>
+            <p class="text-2xl font-semibold text-gray-800">{{ stats.total_tickets }}</p>
           </div>
         </div>
       </div>
@@ -216,7 +160,7 @@
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-500">Sold</p>
-            <p class="text-2xl font-semibold text-gray-800">2,156</p>
+            <p class="text-2xl font-semibold text-gray-800">{{ stats.sold_tickets }}</p>
           </div>
         </div>
       </div>
@@ -228,7 +172,7 @@
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-500">Revenue</p>
-            <p class="text-2xl font-semibold text-gray-800">$42,580</p>
+            <p class="text-2xl font-semibold text-gray-800">${{ stats.revenue }}</p>
           </div>
         </div>
       </div>
@@ -240,10 +184,110 @@
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-500">Available</p>
-            <p class="text-2xl font-semibold text-gray-800">1,689</p>
+            <p class="text-2xl font-semibold text-gray-800">{{ stats.available_tickets }}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Create Ticket Modal -->
+  <div id="ticketModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-800">Create Ticket</h3>
+          <button id="closeTicketModal" class="text-gray-400 hover:text-gray-500">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <form id="ticketForm" method="post" action="{% url 'main:create_ticket' %}">
+        {% csrf_token %}
+        <div class="px-6 py-4">
+          <div class="mb-4">
+            <label for="event" class="block text-sm font-medium text-gray-700 mb-1">Event</label>
+            <select id="event" name="event" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+              <option value="">Select Event</option>
+              {% for event in events %}
+                <option value="{{ event.id }}">{{ event.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="mb-4">
+            <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Ticket Type</label>
+            <select id="type" name="type" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+              <option value="Standard">Standard</option>
+              <option value="VIP">VIP</option>
+              <option value="Premium">Premium</option>
+            </select>
+          </div>
+          
+          <div class="mb-4">
+            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+            <input type="number" id="price" name="price" min="0" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+          </div>
+          
+          <div class="mb-4">
+            <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+            <input type="number" id="quantity" name="quantity" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+          </div>
+        </div>
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+          <button type="button" id="cancelTicketModal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md mr-2 hover:bg-gray-300">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Confirm Deletion</h3>
+      <p class="text-gray-600 mb-6">Are you sure you want to delete this ticket?</p>
+      <div class="flex justify-end">
+        <button id="cancelDelete" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md mr-2">Cancel</button>
+        <form id="deleteForm" method="post" action="">
+          {% csrf_token %}
+          <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const ticketModal = document.getElementById('ticketModal');
+      const openTicketModal = document.getElementById('openTicketModal');
+      const closeTicketModal = document.getElementById('closeTicketModal');
+      const cancelTicketModal = document.getElementById('cancelTicketModal');
+      
+      openTicketModal.addEventListener('click', function() {
+        ticketModal.classList.remove('hidden');
+      });
+      
+      closeTicketModal.addEventListener('click', function() {
+        ticketModal.classList.add('hidden');
+      });
+      
+      cancelTicketModal.addEventListener('click', function() {
+        ticketModal.classList.add('hidden');
+      });
+
+      const deleteModal = document.getElementById('deleteModal');
+      const deleteForm = document.getElementById('deleteForm');
+      const cancelDelete = document.getElementById('cancelDelete');
+      
+      window.confirmDelete = function(ticketId) {
+        deleteModal.classList.remove('hidden');
+        deleteForm.action = `{% url 'main:delete_ticket' 0 %}`.replace('0', ticketId);
+      };
+      
+      cancelDelete.addEventListener('click', function() {
+        deleteModal.classList.add('hidden');
+      });
+    });
+  </script>
 {% endblock %}

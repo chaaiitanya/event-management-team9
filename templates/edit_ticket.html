@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="p-6">
+  <!-- Page Header with Back Button -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Edit Ticket</h1>
+      <p class="text-gray-600 mt-1">Modify ticket information</p>
+    </div>
+    <a href="{% url 'main:view_ticket' ticket.id %}" class="mt-4 md:mt-0 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors flex items-center">
+      <i class="fas fa-arrow-left mr-2"></i>
+      <span>Back to Details</span>
+    </a>
+  </div>
+
+  <!-- Edit Form -->
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+    <form method="post" action="{% url 'main:edit_ticket' ticket.id %}">
+      {% csrf_token %}
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Ticket ID (Read-only) -->
+          <div>
+            <label for="ticket_id" class="block text-sm font-medium text-gray-700 mb-1">Ticket ID</label>
+            <input type="text" id="ticket_id" value="{{ ticket.ticket_id }}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+          </div>
+          
+          <!-- Event (Read-only) -->
+          <div>
+            <label for="event" class="block text-sm font-medium text-gray-700 mb-1">Event</label>
+            <input type="text" id="event" value="{{ ticket.event.title }}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+          </div>
+          
+          <!-- Ticket Type -->
+          <div>
+            <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Ticket Type</label>
+            <select id="type" name="type" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+              <option value="Standard" {% if ticket.type == 'Standard' %}selected{% endif %}>Standard</option>
+              <option value="VIP" {% if ticket.type == 'VIP' %}selected{% endif %}>VIP</option>
+              <option value="Premium" {% if ticket.type == 'Premium' %}selected{% endif %}>Premium</option>
+              <option value="Early Bird" {% if ticket.type == 'Early Bird' %}selected{% endif %}>Early Bird</option>
+              <option value="Student" {% if ticket.type == 'Student' %}selected{% endif %}>Student</option>
+            </select>
+          </div>
+          
+          <!-- Price -->
+          <div>
+            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+            <input type="number" id="price" name="price" min="0" step="0.01" value="{{ ticket.price }}" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+          </div>
+          
+          <!-- Status -->
+          <div>
+            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+              <option value="available" {% if ticket.status == 'available' %}selected{% endif %}>Available</option>
+              <option value="sold" {% if ticket.status == 'sold' %}selected{% endif %}>Sold</option>
+              <option value="used" {% if ticket.status == 'used' %}selected{% endif %}>Used</option>
+              <option value="cancelled" {% if ticket.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+            </select>
+          </div>
+          
+          <!-- User (Read-only if assigned) -->
+          <div>
+            <label for="user" class="block text-sm font-medium text-gray-700 mb-1">User</label>
+            <input type="text" id="user" value="{% if ticket.user %}{{ ticket.user.email }}{% else %}Not assigned{% endif %}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Form Actions -->
+      <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+        <a href="{% url 'main:view_ticket' ticket.id %}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md mr-2 hover:bg-gray-300">Cancel</a>
+        <button type="submit" class="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

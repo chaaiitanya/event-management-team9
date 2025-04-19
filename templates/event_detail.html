@@ -119,225 +119,674 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Right Column - Event Info & Registration -->
-    <div class="lg:w-1/3">
-      <!-- Event Info Card -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6 sticky top-24">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Details</h2>
+      <!-- Comments Section -->
+      <div class="bg-white shadow-sm rounded-lg overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-800">Comments ({{ comments.paginator.count|default:"0" }})</h3>
+        </div>
 
-        <!-- Date & Time -->
-        <div class="flex items-start mb-4">
-          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-            <i class="fas fa-calendar text-blue-600"></i>
+        <div class="p-6">
+          {% if user.is_authenticated %}
+          <div class="mb-6">
+            <h4 class="text-md font-medium text-gray-800 mb-3">Leave a comment</h4>
+            <form method="post" action="{% url 'main:event_detail' event.slug %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <!-- Explicit textarea rendering -->
+              <textarea name="content" rows="4" placeholder="Share your thoughts about this event..." class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">{% if comment_form.content.value %}{{ comment_form.content.value }}{% endif %}</textarea>
+
+              <!-- File Upload Field -->
+              <div class="mt-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Attach Files (optional)</label>
+                <input type="file" name="attachment" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" />
+                <p class="mt-1 text-xs text-gray-500">Max file size: 5MB. Allowed formats: PDF, DOC, DOCX, JPG, PNG</p>
+              </div>
+
+              <div class="flex justify-end mt-3">
+                <button type="submit" name="comment_submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">Post Comment</button>
+              </div>
+            </form>
           </div>
-          <div>
-            <h3 class="text-sm font-medium text-gray-900">Date & Time</h3>
-            <p class="text-gray-600">
-              {% if event.start_date.date == event.end_date.date %} {{ event.start_date|date:"F j, Y" }}<br />
-              {{ event.start_date|date:"g:i A" }} - {{ event.end_date|date:"g:i A" }} {% else %} {{ event.start_date|date:"F j, Y, g:i A" }} -<br />
-              {{ event.end_date|date:"F j, Y, g:i A" }} {% endif %}
+          {% else %}
+          <div class="bg-blue-50 p-4 rounded-lg mb-6">
+            <p class="text-blue-700">
+              <i class="fas fa-info-circle mr-2"></i>
+              Please <a href="{% url 'account_login' %}?next={{ request.path }}" class="text-blue-800 font-medium hover:underline">sign in</a> to leave a comment.
             </p>
           </div>
-        </div>
+          {% endif %}
 
-        <!-- Location -->
-        <div class="flex items-start mb-4">
-          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
-            <i class="fas fa-map-marker-alt text-green-600"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-medium text-gray-900">Location</h3>
-            <p class="text-gray-600">{{ event.location }}</p>
-          </div>
-        </div>
+          <div id="comments-container">
+            {% if comments %} {% for comment in comments %}
+            <div id="comment-{{ comment.id }}" class="border-b border-gray-100 pb-4 mb-4 {% if not forloop.last %}mb-4{% endif %}">
+              <div class="flex">
+                <div class="flex-shrink-0 mr-3">
+                  <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium">{{ comment.user.get_abbreviated_name|slice:":2"|upper|default:comment.user.email|slice:":2"|upper }}</div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center mb-1">
+                    <h4 class="font-medium text-gray-900">{{ comment.user.get_full_name|default:comment.user.email }}</h4>
+                    <span class="text-xs text-gray-500 ml-2">
+                      {{ comment.created_at|date:"M d, Y, g:i a" }} {% if comment.updated_at|date:"U" > comment.created_at|date:"U" %}
+                      <span class="ml-1">(edited)</span>
+                      {% endif %}
+                    </span>
+                  </div>
 
-        <!-- Registration Deadline -->
-        {% if event.registration_deadline %}
-        <div class="flex items-start mb-4">
-          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
-            <i class="fas fa-clock text-yellow-600"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-medium text-gray-900">Registration Deadline</h3>
-            <p class="text-gray-600">{{ event.registration_deadline|date:"F j, Y, g:i A" }}</p>
+                  <div class="comment-content text-gray-700 mb-2">{{ comment.content|linebreaks }}</div>
 
-            {% if event.registration_deadline > now %}
-            <p class="text-xs text-green-600 mt-1">Registration still open</p>
-            {% else %}
-            <p class="text-xs text-red-600 mt-1">Registration closed</p>
+                  <!-- Comment Attachment -->
+                  {% if comment.attachment %}
+                  <div class="mt-2 mb-3 bg-gray-50 rounded-md p-2 inline-block">
+                    <a href="{{ comment.attachment.url }}" target="_blank" class="flex items-center text-sm text-primary-600 hover:text-primary-800">
+                      {% with ext=comment.attachment.name|lower %} {% if '.pdf' in ext %}
+                      <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                      {% elif '.doc' in ext or '.docx' in ext %}
+                      <i class="fas fa-file-word text-blue-500 mr-2"></i>
+                      {% elif '.jpg' in ext or '.jpeg' in ext or '.png' in ext %}
+                      <i class="fas fa-file-image text-green-500 mr-2"></i>
+                      {% else %}
+                      <i class="fas fa-file text-gray-500 mr-2"></i>
+                      {% endif %} {% endwith %} {{ comment.attachment.name|slice:"-15:" }}
+                    </a>
+                  </div>
+                  {% endif %}
+
+                  <!-- Comment Actions -->
+                  <div class="flex items-center space-x-4 text-xs mb-2">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'main:event_detail' event.slug %}?reply_to={{ comment.id }}" class="text-gray-500 hover:text-gray-700"> <i class="fas fa-reply mr-1"></i> Reply </a>
+
+                    {% if user == comment.user or user.is_staff %} {% if user == comment.user %}
+                    <a href="{% url 'main:event_detail' event.slug %}?edit_comment={{ comment.id }}" class="text-gray-500 hover:text-gray-700"> <i class="fas fa-edit mr-1"></i> Edit </a>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'main:event_detail' event.slug %}" class="inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="delete_comment" value="{{ comment.id }}" />
+                      <button type="submit" class="text-gray-500 hover:text-red-600 bg-transparent border-0 p-0"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+                    </form>
+                    {% endif %} {% endif %}
+                  </div>
+
+                  <!-- Replies -->
+                  {% if comment.replies.exists %}
+                  <div class="replies mt-3 pl-4 border-l-2 border-gray-100">
+                    {% for reply in comment.replies.all %}
+                    <div id="comment-{{ reply.id }}" class="{% if not forloop.last %}border-b border-gray-100 pb-3 mb-3{% endif %}">
+                      <div class="flex">
+                        <div class="flex-shrink-0 mr-3">
+                          <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium text-xs">{{ reply.user.get_abbreviated_name|slice:":2"|upper|default:reply.user.email|slice:":2"|upper }}</div>
+                        </div>
+                        <div class="flex-1">
+                          <div class="flex items-center mb-1">
+                            <h5 class="font-medium text-gray-900 text-sm">{{ reply.user.get_full_name|default:reply.user.email }}</h5>
+                            <span class="text-xs text-gray-500 ml-2">
+                              {{ reply.created_at|date:"M d, Y, g:i a" }} {% if reply.updated_at|date:"U" > reply.created_at|date:"U" %}
+                              <span class="ml-1">(edited)</span>
+                              {% endif %}
+                            </span>
+                          </div>
+
+                          <div class="comment-content text-gray-700 mb-2 text-sm">{{ reply.content|linebreaks }}</div>
+
+                          <!-- Reply Attachment -->
+                          {% if reply.attachment %}
+                          <div class="mt-1 mb-2 bg-gray-50 rounded-md p-2 inline-block">
+                            <a href="{{ reply.attachment.url }}" target="_blank" class="flex items-center text-xs text-primary-600 hover:text-primary-800">
+                              {% with ext=reply.attachment.name|lower %} {% if '.pdf' in ext %}
+                              <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                              {% elif '.doc' in ext or '.docx' in ext %}
+                              <i class="fas fa-file-word text-blue-500 mr-2"></i>
+                              {% elif '.jpg' in ext or '.jpeg' in ext or '.png' in ext %}
+                              <i class="fas fa-file-image text-green-500 mr-2"></i>
+                              {% else %}
+                              <i class="fas fa-file text-gray-500 mr-2"></i>
+                              {% endif %} {% endwith %} {{ reply.attachment.name|slice:"-15:" }}
+                            </a>
+                          </div>
+                          {% endif %}
+
+                          <div class="flex items-center space-x-4 text-xs">
+                            {% if user == reply.user or user.is_staff %} {% if user == reply.user %}
+                            <a href="{% url 'main:event_detail' event.slug %}?edit_comment={{ reply.id }}" class="text-gray-500 hover:text-gray-700"> <i class="fas fa-edit mr-1"></i> Edit </a>
+                            {% endif %}
+
+                            <form method="post" action="{% url 'main:event_detail' event.slug %}" class="inline">
+                              {% csrf_token %}
+                              <input type="hidden" name="delete_comment" value="{{ reply.id }}" />
+                              <button type="submit" class="text-gray-500 hover:text-red-600 bg-transparent border-0 p-0"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+                            </form>
+                            {% endif %}
+                          </div>
+
+                          <!-- Edit Reply Form -->
+                          {% if user.is_authenticated and edit_comment == reply.id|stringformat:"i" %}
+                          <div class="mt-3">
+                            <form method="post" action="{% url 'main:event_detail' event.slug %}" enctype="multipart/form-data">
+                              {% csrf_token %}
+                              <input type="hidden" name="edit_comment_id" value="{{ reply.id }}" />
+                              <div class="mb-2">
+                                <!-- Explicit textarea rendering for edit form -->
+                                <textarea name="content" rows="3" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">{% if edit_form.content.value %}{{ edit_form.content.value }}{% else %}{{ reply.content }}{% endif %}</textarea>
+                              </div>
+
+                              <!-- Edit Attachment -->
+                              <div class="mb-3">
+                                {% if reply.attachment %}
+                                <div class="flex items-center mb-2">
+                                  <span class="text-sm text-gray-600 mr-2">Current file:</span>
+                                  <span class="text-xs text-gray-500">{{ reply.attachment.name }}</span>
+                                  <label class="ml-2 text-xs text-red-500 cursor-pointer"> <input type="checkbox" name="remove_attachment" class="mr-1" /> Remove </label>
+                                </div>
+                                {% endif %}
+                                <input type="file" name="attachment" class="block w-full text-xs text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" />
+                              </div>
+
+                              <div class="flex justify-end space-x-2">
+                                <a href="{% url 'main:event_detail' event.slug %}" class="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"> Cancel </a>
+                                <button type="submit" name="edit_submit" class="px-3 py-1 text-xs bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors">Update Reply</button>
+                              </div>
+                            </form>
+                          </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+
+                  <!-- Reply Form -->
+                  {% if user.is_authenticated and reply_to == comment.id|stringformat:"i" %}
+                  <div class="mt-3 pl-4">
+                    <form method="post" action="{% url 'main:event_detail' event.slug %}" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <input type="hidden" name="parent_id" value="{{ comment.id }}" />
+                      <div class="mb-2">
+                        <!-- Explicit textarea rendering for reply form -->
+                        <textarea name="content" rows="2" placeholder="Reply to this comment..." class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">{% if reply_form.content.value %}{{ reply_form.content.value }}{% endif %}</textarea>
+                      </div>
+
+                      <!-- Reply File Upload -->
+                      <div class="mb-3">
+                        <input type="file" name="attachment" class="block w-full text-xs text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" />
+                      </div>
+
+                      <div class="flex justify-end space-x-2">
+                        <a href="{% url 'main:event_detail' event.slug %}" class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"> Cancel </a>
+                        <button type="submit" name="reply_submit" class="px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors">Post Reply</button>
+                      </div>
+                    </form>
+                  </div>
+                  {% endif %}
+
+                  <!-- Edit Comment Form -->
+                  {% if user.is_authenticated and edit_comment == comment.id|stringformat:"i" %}
+                  <div class="mt-3">
+                    <form method="post" action="{% url 'main:event_detail' event.slug %}" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <input type="hidden" name="edit_comment_id" value="{{ comment.id }}" />
+                      <div class="mb-2">
+                        <!-- Explicit textarea rendering for edit form -->
+                        <textarea name="content" rows="4" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">{% if edit_form.content.value %}{{ edit_form.content.value }}{% else %}{{ comment.content }}{% endif %}</textarea>
+                      </div>
+
+                      <!-- Edit Attachment -->
+                      <div class="mb-3">
+                        {% if comment.attachment %}
+                        <div class="flex items-center mb-2">
+                          <span class="text-sm text-gray-600 mr-2">Current file:</span>
+                          <span class="text-xs text-gray-500">{{ comment.attachment.name }}</span>
+                          <label class="ml-2 text-xs text-red-500 cursor-pointer"> <input type="checkbox" name="remove_attachment" class="mr-1" /> Remove </label>
+                        </div>
+                        {% endif %}
+                        <input type="file" name="attachment" class="block w-full text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" />
+                      </div>
+
+                      <div class="flex justify-end space-x-2">
+                        <a href="{% url 'main:event_detail' event.slug %}" class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"> Cancel </a>
+                        <button type="submit" name="edit_submit" class="px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors">Update Comment</button>
+                      </div>
+                    </form>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            {% if comments.paginator.num_pages > 1 %}
+            <div class="mt-6 flex justify-center">
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                {% if comments.has_previous %}
+                <a href="?page={{ comments.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Previous</span>
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+                {% else %}
+                <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-300 cursor-not-allowed">
+                  <span class="sr-only">Previous</span>
+                  <i class="fas fa-chevron-left"></i>
+                </span>
+                {% endif %} {% for i in comments.paginator.page_range %} {% if comments.number == i %}
+                <span aria-current="page" class="z-10 bg-primary-50 border-primary-500 text-primary-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> {{ i }} </span>
+                {% elif i > comments.number|add:"-3" and i < comments.number|add:"3" %}
+                <a href="?page={{ i }}" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> {{ i }} </a>
+                {% endif %} {% endfor %} {% if comments.has_next %}
+                <a href="?page={{ comments.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Next</span>
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                {% else %}
+                <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-300 cursor-not-allowed">
+                  <span class="sr-only">Next</span>
+                  <i class="fas fa-chevron-right"></i>
+                </span>
+                {% endif %}
+              </nav>
+            </div>
+            {% endif %} {% else %}
+            <div class="text-center py-8">
+              <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 mb-4">
+                <i class="fas fa-comments text-gray-400 text-xl"></i>
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">No comments yet</h3>
+              <p class="text-gray-600">Be the first to share your thoughts on this event!</p>
+            </div>
             {% endif %}
           </div>
         </div>
-        {% endif %}
+      </div>
+    </div>
 
-        <!-- Registration/Action Button -->
-        <!-- Registration/Action Button -->
-        <div class="mt-6">
-          {% if event.status == 'cancelled' %}
-          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Event Cancelled</button>
-          {% elif event.is_past_event %}
-          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Event Has Ended</button>
-          {% elif is_registered %}
-          <a href="{% url 'main:cancel_registration' event.id %}" class="w-full px-6 py-3 bg-red-100 text-red-700 rounded-md font-medium text-center inline-block hover:bg-red-200 transition-colors"> Cancel Registration </a>
-          {% elif event.registration_open %} {% if event.capacity > 0 and event.registrations.count >= event.capacity %}
-          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Event Full</button>
+    <!-- Event Info & Registration - Full Width Layout -->
+<div class="lg:w-1/3 px-4">
+  <!-- Event Info Card -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Event Details</h2>
+
+    <!-- Date & Time -->
+    <div class="flex items-start mb-4">
+      <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+        <i class="fas fa-calendar text-blue-600"></i>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-900">Date & Time</h3>
+        <p class="text-gray-600">
+          {% if event.start_date.date == event.end_date.date %}
+            {{ event.start_date|date:"F j, Y" }}<br />
+            {{ event.start_date|date:"g:i A" }} - {{ event.end_date|date:"g:i A" }}
           {% else %}
-          <a href="{% url 'main:register_event' event.id %}" class="w-full px-6 py-3 bg-primary-600 text-white rounded-md font-medium text-center inline-block hover:bg-primary-700 transition-colors"> Register Now </a>
-          {% endif %} {% else %}
-          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Registration Closed</button>
+            {{ event.start_date|date:"F j, Y, g:i A" }} -<br />
+            {{ event.end_date|date:"F j, Y, g:i A" }}
           {% endif %}
+        </p>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="flex items-start mb-4">
+      <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+        <i class="fas fa-map-marker-alt text-green-600"></i>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-900">Location</h3>
+        <p class="text-gray-600">{{ event.location }}</p>
+      </div>
+    </div>
+
+    <!-- Registration Deadline -->
+    {% if event.registration_deadline %}
+    <div class="flex items-start mb-4">
+      <div class="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
+        <i class="fas fa-clock text-yellow-600"></i>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-900">Registration Deadline</h3>
+        <p class="text-gray-600">{{ event.registration_deadline|date:"F j, Y, g:i A" }}</p>
+        {% if event.registration_deadline > now %}
+        <p class="text-xs text-green-600 mt-1">Registration still open</p>
+        {% else %}
+        <p class="text-xs text-red-600 mt-1">Registration closed</p>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Tickets & Registration Section -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Tickets & Registration</h3>
+
+    {% if is_registered %}
+    <!-- Already Registered Message -->
+    <div class="bg-green-50 border border-emerald-200 rounded-lg p-6 mb-6 shadow-sm">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 mt-1">
+          <svg class="h-6 w-6 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
         </div>
-
-        <!-- Add to Calendar -->
-        <div class="mt-4">
-          <button id="addToCalendarBtn" class="w-full px-6 py-2 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors flex items-center justify-center">
-            <i class="fas fa-calendar-plus mr-2"></i>
-            Add to Calendar
-          </button>
-
-          <div id="calendarOptions" class="hidden mt-2 bg-white border border-gray-200 rounded-md shadow-sm">
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToGoogleCalendar(); return false;"> <i class="fab fa-google mr-2 text-red-500"></i> Google Calendar </a>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToOutlook(); return false;"> <i class="fab fa-microsoft mr-2 text-blue-500"></i> Outlook </a>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToAppleCalendar(); return false;"> <i class="fab fa-apple mr-2"></i> Apple Calendar </a>
+        <div class="ml-3">
+          <h4 class="text-lg font-medium text-emerald-800">You're all set!</h4>
+          <p class="mt-1 text-sm text-emerald-700">Thank you for registering for this event. A confirmation email has been sent.</p>
+          <div class="mt-4">
+            <a href="{% url 'main:cancel_registration' event.id %}" class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50">
+              <svg class="mr-2 -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Cancel Registration
+            </a>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Share Options -->
-        <div id="shareOptions" class="hidden mt-4 bg-white border border-gray-200 rounded-md shadow-sm">
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="shareOnFacebook(); return false;"> <i class="fab fa-facebook mr-2 text-blue-600"></i> Facebook </a>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="shareOnTwitter(); return false;"> <i class="fab fa-twitter mr-2 text-blue-400"></i> Twitter </a>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="shareOnLinkedIn(); return false;"> <i class="fab fa-linkedin mr-2 text-blue-700"></i> LinkedIn </a>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="copyLink(); return false;"> <i class="fas fa-link mr-2 text-gray-500"></i> Copy Link </a>
+    {% elif ticket_types %}
+    <!-- Registration Form -->
+    <form method="post" action="{% url 'main:register_event' event.id %}" id="ticketSelectionForm">
+      {% csrf_token %}
+      <div class="mb-5">
+        <label for="ticket_type" class="block text-sm font-medium text-gray-700 mb-2">Select Ticket Type</label>
+        <div class="relative">
+          <select id="ticket_type" name="ticket_type" class="block w-full pl-3 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 rounded-md appearance-none" required>
+            <option value="">-- Select a ticket type --</option>
+            {% for type in ticket_types %}
+            <option value="{{ type.name }}" {% if type.available_count == 0 %}disabled{% endif %} data-price="{{ type.price }}" data-available="{{ type.available_count }}">
+              {{ type.name }} - ${{ type.price }} 
+              {% if type.available_count > 0 %}
+                ({{ type.available_count }} available)
+              {% else %}
+                (Sold Out)
+              {% endif %}
+            </option>
+            {% endfor %}
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </div>
         </div>
       </div>
 
-      <!-- Related Events -->
-      {% if related_events %}
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Related Events</h2>
+      <!-- Ticket Price -->
+      <div class="mb-5 bg-gray-50 p-4 rounded-md">
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-700">Ticket Price:</span>
+          <span id="ticketPrice" class="text-xl font-bold text-primary-600">$0.00</span>
+        </div>
 
-        <div class="space-y-4">
-          {% for related in related_events %}
-          <a href="{% url 'main:event_detail' related.slug %}" class="block group">
-            <div class="flex items-start">
-              <div class="w-16 h-16 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 mr-4">
-                {% if related.image %}
-                <img src="{{ related.image.url }}" alt="{{ related.title }}" class="w-full h-full object-cover" />
-                {% else %}
-                <div class="w-full h-full flex items-center justify-center bg-gray-200">
-                  <i class="fas fa-calendar-alt text-gray-400"></i>
-                </div>
-                {% endif %}
+        <!-- Ticket Availability -->
+        <div id="ticketAvailability" class="mt-3 pt-3 border-t border-gray-200 hidden">
+          <p class="text-xs text-gray-500 mb-1">Ticket Availability:</p>
+          <div class="flex items-center">
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+              <div id="availabilityBar" class="bg-green-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <span id="availabilityText" class="ml-2 text-xs font-medium text-gray-600 min-w-[60px] text-right"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Register Button -->
+      <div class="mt-5">
+        {% if event.status == 'cancelled' %}
+          <div class="bg-gray-100 border-l-4 border-gray-500 p-4 rounded-md mb-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
               </div>
-              <div>
-                <h3 class="text-sm font-medium text-gray-900 group-hover:text-primary-600 transition-colors">{{ related.title }}</h3>
-                <p class="text-xs text-gray-500">{{ related.start_date|date:"F j, Y" }}</p>
-                <p class="text-xs text-gray-500 mt-1">{{ related.location }}</p>
+              <div class="ml-3">
+                <p class="text-sm text-gray-700">This event has been cancelled.</p>
               </div>
             </div>
-          </a>
-          {% endfor %}
-        </div>
+          </div>
+          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Event Cancelled</button>
+        {% elif event.is_past_event %}
+          <div class="bg-gray-100 border-l-4 border-gray-500 p-4 rounded-md mb-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-gray-700">This event has already ended.</p>
+              </div>
+            </div>
+          </div>
+          <button disabled class="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-md font-medium cursor-not-allowed">Event Ended</button>
+        {% else %}
+          <button type="submit" class="w-full px-6 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition">Register Now</button>
+        {% endif %}
       </div>
-      {% endif %}
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- Add to Calendar -->
+  <div class="mt-4">
+    <button id="addToCalendarBtn" class="w-full px-6 py-2 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors flex items-center justify-center">
+      <i class="fas fa-calendar-plus mr-2"></i>
+      Add to Calendar
+    </button>
+
+    <div id="calendarOptions" class="hidden mt-2 bg-white border border-gray-200 rounded-md shadow-sm">
+      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToGoogleCalendar(); return false;"> <i class="fab fa-google mr-2 text-red-500"></i> Google Calendar </a>
+      {% comment %} <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToOutlook(); return false;"> <i class="fab fa-microsoft mr-2 text-blue-500"></i> Outlook </a>
+      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="addToAppleCalendar(); return false;"> <i class="fab fa-apple mr-2"></i> Apple Calendar </a> {% endcomment %}
     </div>
   </div>
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Add to Calendar dropdown toggle
-    const addToCalendarBtn = document.getElementById("addToCalendarBtn");
-    const calendarOptions = document.getElementById("calendarOptions");
+  </div>
 
-    addToCalendarBtn.addEventListener("click", function () {
-      calendarOptions.classList.toggle("hidden");
-      // Hide share options if open
-      if (!shareOptions.classList.contains("hidden")) {
-        shareOptions.classList.add("hidden");
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Ticket selection logic
+      const ticketTypeSelect = document.getElementById("ticket_type");
+      const ticketPrice = document.getElementById("ticketPrice");
+      const registerButton = document.getElementById("registerButton");
+      const ticketAvailability = document.getElementById("ticketAvailability");
+      const availabilityBar = document.getElementById("availabilityBar");
+      const availabilityText = document.getElementById("availabilityText");
+
+      if (ticketTypeSelect) {
+        ticketTypeSelect.addEventListener("change", function() {
+          const selectedOption = ticketTypeSelect.options[ticketTypeSelect.selectedIndex];
+          
+          if (selectedOption.value) {
+            const price = selectedOption.getAttribute("data-price");
+            const available = parseInt(selectedOption.getAttribute("data-available"));
+            
+            // Format price with animation
+            animatePrice(ticketPrice, parseFloat(price));
+            
+            // Enable register button if tickets are available
+            if (available > 0) {
+              registerButton.disabled = false;
+              registerButton.classList.add("animate-pulse");
+              setTimeout(() => {
+                registerButton.classList.remove("animate-pulse");
+              }, 1000);
+            } else {
+              registerButton.disabled = true;
+            }
+            
+            // Show availability indicator with animation
+            if (available > 0) {
+              ticketAvailability.classList.remove("hidden");
+              
+              // Calculate percentage for visual indicator
+              const total = Math.max(available, 10); // Estimate total capacity
+              const percentage = Math.min(100, Math.max(5, (available / total) * 100));
+              
+              // Animate the bar
+              availabilityBar.style.width = "0%";
+              setTimeout(() => {
+                availabilityBar.style.width = `${percentage}%`;
+              }, 50);
+              
+              // Change color based on availability
+              if (percentage < 25) {
+                availabilityBar.className = "bg-red-500 h-2.5 rounded-full transition-all duration-300";
+                availabilityText.textContent = `${available} left!`;
+                availabilityText.className = "ml-2 text-xs font-medium text-red-600 min-w-[60px] text-right";
+              } else if (percentage < 50) {
+                availabilityBar.className = "bg-yellow-500 h-2.5 rounded-full transition-all duration-300";
+                availabilityText.textContent = `${available} left`;
+                availabilityText.className = "ml-2 text-xs font-medium text-yellow-600 min-w-[60px] text-right";
+              } else {
+                availabilityBar.className = "bg-green-600 h-2.5 rounded-full transition-all duration-300";
+                availabilityText.textContent = `${available} available`;
+                availabilityText.className = "ml-2 text-xs font-medium text-green-600 min-w-[60px] text-right";
+              }
+            } else {
+              ticketAvailability.classList.add("hidden");
+            }
+          } else {
+            // Reset when no selection
+            ticketPrice.textContent = "$0.00";
+            registerButton.disabled = true;
+            ticketAvailability.classList.add("hidden");
+          }
+        });
       }
+      
+      // Function to animate price change
+      function animatePrice(element, targetPrice) {
+        const startPrice = parseFloat(element.textContent.replace('$', '')) || 0;
+        const duration = 500; // ms
+        const startTime = performance.now();
+        
+        function updatePrice(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Easing function for smoother animation
+          const easeOutQuad = function(t) { return t * (2 - t); };
+          const easedProgress = easeOutQuad(progress);
+          
+          const currentPrice = startPrice + (targetPrice - startPrice) * easedProgress;
+          element.textContent = `$${currentPrice.toFixed(2)}`;
+          
+          if (progress < 1) {
+            requestAnimationFrame(updatePrice);
+          }
+        }
+        
+        requestAnimationFrame(updatePrice);
+      }
+
+
+      // Add to Calendar dropdown toggle
+      const addToCalendarBtn = document.getElementById("addToCalendarBtn");
+      const calendarOptions = document.getElementById("calendarOptions");
+
+      addToCalendarBtn.addEventListener("click", function () {
+        calendarOptions.classList.toggle("hidden");
+        // Hide share options if open
+        if (!shareOptions.classList.contains("hidden")) {
+          shareOptions.classList.add("hidden");
+        }
+      });
+
+      // Share dropdown toggle
+      const shareButton = document.getElementById("shareButton");
+      const shareOptions = document.getElementById("shareOptions");
+
+      shareButton.addEventListener("click", function () {
+        shareOptions.classList.toggle("hidden");
+        // Hide calendar options if open
+        if (!calendarOptions.classList.contains("hidden")) {
+          calendarOptions.classList.add("hidden");
+        }
+      });
+
+      // Close dropdowns when clicking outside
+      document.addEventListener("click", function (event) {
+        if (!event.target.closest("#addToCalendarBtn") && !event.target.closest("#calendarOptions")) {
+          calendarOptions.classList.add("hidden");
+        }
+
+        if (!event.target.closest("#shareButton") && !event.target.closest("#shareOptions")) {
+          shareOptions.classList.add("hidden");
+        }
+      });
     });
 
-    // Share dropdown toggle
-    const shareButton = document.getElementById("shareButton");
-    const shareOptions = document.getElementById("shareOptions");
+    // Calendar functions
+    function addToGoogleCalendar() {
+      const eventTitle = encodeURIComponent("{{ event.title }}");
+      const eventDescription = encodeURIComponent("{{ event.description|truncatewords:50 }}");
+      const eventLocation = encodeURIComponent("{{ event.location }}");
+      const startDate = new Date('{{ event.start_date|date:"c" }}');
+      const endDate = new Date('{{ event.end_date|date:"c" }}');
 
-    shareButton.addEventListener("click", function () {
-      shareOptions.classList.toggle("hidden");
-      // Hide calendar options if open
-      if (!calendarOptions.classList.contains("hidden")) {
-        calendarOptions.classList.add("hidden");
-      }
-    });
+      const startDateFormatted = startDate.toISOString().replace(/-|:|\.\d+/g, "");
+      const endDateFormatted = endDate.toISOString().replace(/-|:|\.\d+/g, "");
 
-    // Close dropdowns when clicking outside
-    document.addEventListener("click", function (event) {
-      if (!event.target.closest("#addToCalendarBtn") && !event.target.closest("#calendarOptions")) {
-        calendarOptions.classList.add("hidden");
-      }
+      const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&details=${eventDescription}&location=${eventLocation}&dates=${startDateFormatted}/${endDateFormatted}`;
 
-      if (!event.target.closest("#shareButton") && !event.target.closest("#shareOptions")) {
-        shareOptions.classList.add("hidden");
-      }
-    });
-  });
+      window.open(googleCalendarUrl, "_blank");
+    }
 
-  // Calendar functions
-  function addToGoogleCalendar() {
-    const eventTitle = encodeURIComponent("{{ event.title }}");
-    const eventDescription = encodeURIComponent("{{ event.description|truncatewords:50 }}");
-    const eventLocation = encodeURIComponent("{{ event.location }}");
-    const startDate = new Date('{{ event.start_date|date:"c" }}');
-    const endDate = new Date('{{ event.end_date|date:"c" }}');
+    function addToOutlook() {
+      // Implementation for Outlook calendar
+      alert("Outlook calendar integration coming soon!");
+    }
 
-    const startDateFormatted = startDate.toISOString().replace(/-|:|\.\d+/g, "");
-    const endDateFormatted = endDate.toISOString().replace(/-|:|\.\d+/g, "");
+    function addToAppleCalendar() {
+      // Implementation for Apple calendar
+      alert("Apple calendar integration coming soon!");
+    }
 
-    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&details=${eventDescription}&location=${eventLocation}&dates=${startDateFormatted}/${endDateFormatted}`;
+    // Share functions
+    function shareOnFacebook() {
+      const url = encodeURIComponent(window.location.href);
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+    }
 
-    window.open(googleCalendarUrl, "_blank");
-  }
+    function shareOnTwitter() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent("Check out this event: {{ event.title }}");
+      window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank");
+    }
 
-  function addToOutlook() {
-    // Implementation for Outlook calendar
-    alert("Outlook calendar integration coming soon!");
-  }
+    function shareOnLinkedIn() {
+      const url = encodeURIComponent(window.location.href);
+      const title = encodeURIComponent("{{ event.title }}");
+      const summary = encodeURIComponent("{{ event.description|truncatewords:30 }}");
+      window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${summary}`, "_blank");
+    }
 
-  function addToAppleCalendar() {
-    // Implementation for Apple calendar
-    alert("Apple calendar integration coming soon!");
-  }
+    function copyLink() {
+      const tempInput = document.createElement("input");
+      tempInput.value = window.location.href;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
 
-  // Share functions
-  function shareOnFacebook() {
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
-  }
+      alert("Link copied to clipboard!");
+    }
+  </script>
 
-  function shareOnTwitter() {
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent("Check out this event: {{ event.title }}");
-    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank");
-  }
+  <style>
+    /* Comment styles */
+    .comment-content {
+      word-break: break-word;
+    }
 
-  function shareOnLinkedIn() {
-    const url = encodeURIComponent(window.location.href);
-    const title = encodeURIComponent("{{ event.title }}");
-    const summary = encodeURIComponent("{{ event.description|truncatewords:30 }}");
-    window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}&summary=${summary}`, "_blank");
-  }
-
-  function copyLink() {
-    const tempInput = document.createElement("input");
-    tempInput.value = window.location.href;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand("copy");
-    document.body.removeChild(tempInput);
-
-    alert("Link copied to clipboard!");
-  }
-</script>
-{% endblock %}
+    .replies {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  </style>
+  {% endblock %}
+</div>

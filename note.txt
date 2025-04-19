@@ -1,0 +1,3 @@
+Admin Credentials:
+    Username/Email: admin@system.com
+    Password: event2025

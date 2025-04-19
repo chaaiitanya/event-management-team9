@@ -3,393 +3,86 @@
 {% load static %}
 
 {% block content %}
+  {% if messages %}
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+      <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
   <div class="p-6">
-    <!-- Page Header with Action Button -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-800">Users Management <span class="bg-orange-500 text-white px-2">IN PROGRESS</span></h1>
+        <h1 class="text-2xl font-bold text-gray-800">Users Management</h1>
         <p class="text-gray-600 mt-1">View and manage system users</p>
       </div>
-      <a href="#" class="mt-4 md:mt-0 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center">
+      <a href="{% url 'admin:users_account_add' %}" class="mt-4 md:mt-0 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center">
         <i class="fas fa-user-plus mr-2"></i>
         <span>Add New User</span>
       </a>
     </div>
 
-    <!-- Filters and Search -->
-    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-      <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
-        <div class="flex-grow">
-          <div class="relative">
-            <input type="text" placeholder="Search users..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-            <div class="absolute left-3 top-2.5 text-gray-400">
-              <i class="fas fa-search"></i>
-            </div>
-          </div>
-        </div>
-        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-          <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-            <option value="">All Roles</option>
-            <option value="admin">Administrator</option>
-            <option value="manager">Event Manager</option>
-            <option value="staff">Staff</option>
-            <option value="user">Regular User</option>
-          </select>
-          <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="pending">Pending</option>
-            <option value="blocked">Blocked</option>
-          </select>
-          <button class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors">
-            <i class="fas fa-filter mr-2"></i>
-            <span>Filter</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Users Table -->
     <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contact
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Role
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Last Login
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <!-- User 1 -->
-            <tr>
+            {% for user in users %}
+            <tr class="hover:bg-gray-100 transition-colors">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                    JD
+                    {{ user.get_abbreviated_name }}
                   </div>
                   <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">John Doe</div>
-                    <div class="text-sm text-gray-500">Joined Mar 15, 2024</div>
+                    <div class="text-sm font-medium text-gray-900">{{ user.get_full_name }}</div>
+                    <div class="text-sm text-gray-500">Joined {{ user.created_at|date:"M d, Y" }}</div>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">john.doe@example.com</div>
+                <div class="text-sm text-gray-900">{{ user.email }}</div>
                 <div class="text-sm text-gray-500">+255 123 456 789</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Administrator</div>
-                <div class="text-sm text-gray-500">Full access</div>
+                <div class="text-sm text-gray-900">{{ user.is_admin|yesno:"Administrator,Regular User" }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Today</div>
-                <div class="text-sm text-gray-500">10:30 AM</div>
+                <div class="text-sm text-gray-900">{{ user.updated_at|date:"M d, Y H:i A" }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Active
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ user.is_active|yesno:'bg-green-100 text-green-800,bg-red-100 text-red-800' }}">
+                  {{ user.is_active|yesno:'Active,Blocked' }}
                 </span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3">
-                  <i class="fas fa-eye"></i>
-                </a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3">
+              <td class="px-6 py-4 whitespace-nowrap text-right">
+                <a href="{% url 'admin:users_account_change' user.id %}" class="text-yellow-600 hover:text-yellow-900 mr-3">
                   <i class="fas fa-edit"></i>
                 </a>
-                <a href="#" class="text-red-600 hover:text-red-900">
+                <a href="{% url 'admin:users_account_delete' user.id %}" class="text-red-600 hover:text-red-900">
                   <i class="fas fa-trash"></i>
                 </a>
               </td>
             </tr>
-
-            <!-- User 2 -->
+            {% empty %}
             <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold">
-                    JS
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">Jane Smith</div>
-                    <div class="text-sm text-gray-500">Joined Jan 5, 2024</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">jane.smith@example.com</div>
-                <div class="text-sm text-gray-500">+255 987 654 321</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Event Manager</div>
-                <div class="text-sm text-gray-500">Event management access</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Yesterday</div>
-                <div class="text-sm text-gray-500">3:45 PM</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Active
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3">
-                  <i class="fas fa-eye"></i>
-                </a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3">
-                  <i class="fas fa-edit"></i>
-                </a>
-                <a href="#" class="text-red-600 hover:text-red-900">
-                  <i class="fas fa-trash"></i>
-                </a>
-              </td>
+              <td colspan="6" class="text-center py-4">No users found.</td>
             </tr>
-
-            <!-- User 3 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
-                    RJ
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">Robert Johnson</div>
-                    <div class="text-sm text-gray-500">Joined Feb 12, 2024</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">robert.j@example.com</div>
-                <div class="text-sm text-gray-500">+255 456 789 123</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Staff</div>
-                <div class="text-sm text-gray-500">Limited access</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Mar 15, 2025</div>
-                <div class="text-sm text-gray-500">9:20 AM</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Active
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3">
-                  <i class="fas fa-eye"></i>
-                </a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3">
-                  <i class="fas fa-edit"></i>
-                </a>
-                <a href="#" class="text-red-600 hover:text-red-900">
-                  <i class="fas fa-trash"></i>
-                </a>
-              </td>
-            </tr>
-
-            <!-- User 4 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-100 text-yellow-700 flex items-center justify-center font-bold">
-                    MB
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">Maria Brown</div>
-                    <div class="text-sm text-gray-500">Joined Dec 3, 2023</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">maria.b@example.com</div>
-                <div class="text-sm text-gray-500">+255 789 123 456</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Regular User</div>
-                <div class="text-sm text-gray-500">Basic access</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Mar 10, 2025</div>
-                <div class="text-sm text-gray-500">5:15 PM</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                  Pending
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3">
-                  <i class="fas fa-eye"></i>
-                </a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3">
-                  <i class="fas fa-edit"></i>
-                </a>
-                <a href="#" class="text-red-600 hover:text-red-900">
-                  <i class="fas fa-trash"></i>
-                </a>
-              </td>
-            </tr>
-
-            <!-- User 5 -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold">
-                    DW
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">David Wilson</div>
-                    <div class="text-sm text-gray-500">Joined Nov 18, 2023</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">david.w@example.com</div>
-                <div class="text-sm text-gray-500">+255 321 654 987</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Staff</div>
-                <div class="text-sm text-gray-500">Limited access</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">Feb 28, 2025</div>
-                <div class="text-sm text-gray-500">11:05 AM</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                  Blocked
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" class="text-primary-600 hover:text-primary-900 mr-3">
-                  <i class="fas fa-eye"></i>
-                </a>
-                <a href="#" class="text-yellow-600 hover:text-yellow-900 mr-3">
-                  <i class="fas fa-edit"></i>
-                </a>
-                <a href="#" class="text-red-600 hover:text-red-900">
-                  <i class="fas fa-trash"></i>
-                </a>
-              </td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
-      </div>
-      
-      <!-- Pagination -->
-      <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-        <div class="flex-1 flex justify-between sm:hidden">
-          <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            Previous
-          </a>
-          <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            Next
-          </a>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              Showing <span class="font-medium">1</span> to <span class="font-medium">5</span> of <span class="font-medium">25</span> users
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-              <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                <span class="sr-only">Previous</span>
-                <i class="fas fa-chevron-left"></i>
-              </a>
-              <a href="#" aria-current="page" class="z-10 bg-primary-50 border-primary-500 text-primary-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                1
-              </a>
-              <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                2
-              </a>
-              <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                3
-              </a>
-              <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-                ...
-              </span>
-              <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                5
-              </a>
-              <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                <span class="sr-only">Next</span>
-                <i class="fas fa-chevron-right"></i>
-              </a>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- User Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center">
-          <div class="p-3 rounded-full bg-blue-100 text-blue-500">
-            <i class="fas fa-users text-xl"></i>
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-500">Total Users</p>
-            <p class="text-2xl font-semibold text-gray-800">1,257</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center">
-          <div class="p-3 rounded-full bg-green-100 text-green-500">
-            <i class="fas fa-user-check text-xl"></i>
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-500">Active Users</p>
-            <p class="text-2xl font-semibold text-gray-800">1,180</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center">
-          <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
-            <i class="fas fa-user-clock text-xl"></i>
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-500">New This Month</p>
-            <p class="text-2xl font-semibold text-gray-800">64</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center">
-          <div class="p-3 rounded-full bg-red-100 text-red-500">
-            <i class="fas fa-user-slash text-xl"></i>
-          </div>
-          <div class="ml-4">
-            <p class="text-sm font-medium text-gray-500">Blocked Users</p>
-            <p class="text-2xl font-semibold text-gray-800">13</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
