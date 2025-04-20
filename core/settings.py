@@ -151,8 +151,8 @@ LOGIN_URL = 'users:login'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST="smtp.gmail.com"
 EMAIL_PORT=587
-EMAIL_HOST_USER="secureprojectgroup5@gmail.com"
-EMAIL_HOST_PASSWORD="jhrs yarq oicm ovvs"
+EMAIL_HOST_USER="team60083@gmail.com"
+EMAIL_HOST_PASSWORD="xnpe xyyq gvxf meet"
 EMAIL_USE_TLS=True
 
 SITE_URL = "https://event-management-team9.onrender.com"
