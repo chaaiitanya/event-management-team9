@@ -24,7 +24,7 @@ from django.utils.html import strip_tags
 def dashboard(request):
     if not request.user.is_staff:
         messages.error(request, "You don't have permission to access the dashboard. Please contact an administrator or log in as a staff user.")
-        return redirect('users:events')
+        return redirect('main:events')
     # Get current date for filtering
     current_date = now()
     
