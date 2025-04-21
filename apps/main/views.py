@@ -451,6 +451,7 @@ def send_registration_confirmation(registration):
     email.send()
 
 
+# done by me
 @login_required
 def register_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
